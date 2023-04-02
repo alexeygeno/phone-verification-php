@@ -33,10 +33,10 @@ final class ConfigTest extends BaseTest
      * @dataProvider phoneNumbers
      * @runInSeparateProcess
      */
-    public function testMaxAttemptsExceeded($phoneNumber):void
+    public function testMaxAttemptsExceeded($phone):void
     {
         $manager = new Manager($this->storageMock,  $this->providerMock, ['max_attempts' => self::MAX_ATTEMPTS, 'otp_exp_period' => self::OTP_EXP_PERIOD]);
-        $otp = $manager->start($phoneNumber);
+        $otp = $manager->start($phone);
         $this->assertGreaterThan(0, $otp);
 
         //Max attempts+1 with wrong otp
@@ -44,20 +44,20 @@ final class ConfigTest extends BaseTest
             //impossible to use expectException because it immediately takes us out of a test method
             try {
                 $incorrectOtp = $otp+1;
-                $manager->complete($phoneNumber, $incorrectOtp);
+                $manager->complete($phone, $incorrectOtp);
                 $this->fail('WrongOtp was not thrown');
             } catch (\AlexGeno\PhoneVerification\Exception\WrongOtp $e) {
                 $this->assertEquals($incorrectOtp, $e->otp());
-                $this->assertEquals($phoneNumber, $e->phone());
+                $this->assertEquals($phone, $e->phone());
             }
         }
 
         //correct otp doesn't work anymore
         try {
-            $manager->complete($phoneNumber, $otp); //correct otp
+            $manager->complete($phone, $otp); //correct otp
             $this->fail('MaxAttemptsExceeded was not thrown');
         }catch(\AlexGeno\PhoneVerification\Exception\MaxAttemptsExceeded $e){
-            $this->assertEquals($phoneNumber, $e->phone());
+            $this->assertEquals($phone, $e->phone());
             $this->assertEquals(self::MAX_ATTEMPTS, $e->maxAttempts());
             $this->assertEquals(self::OTP_EXP_PERIOD, $e->availablePeriod());
         }
@@ -67,10 +67,10 @@ final class ConfigTest extends BaseTest
      * @dataProvider phoneNumbers
      * @runInSeparateProcess
      */
-    public function testMaxAttempts($phoneNumber):void
+    public function testMaxAttempts($phone):void
     {
         $manager = new Manager($this->storageMock,  $this->providerMock, ['max_attempts' => self::MAX_ATTEMPTS]);
-        $otp = $manager->start($phoneNumber);
+        $otp = $manager->start($phone);
         $this->assertGreaterThan(0, $otp);
 
         //Max attempts with wrong otp
@@ -78,16 +78,16 @@ final class ConfigTest extends BaseTest
             //impossible to use expectException because it immediately takes it out of a test method
             try {
                 $incorrectOtp = $otp-1;
-                $manager->complete($phoneNumber, $incorrectOtp); //wrong otp
+                $manager->complete($phone, $incorrectOtp); //wrong otp
                 $this->fail('WrongOtp was not thrown');
             } catch (\AlexGeno\PhoneVerification\Exception\WrongOtp $e) {
                 $this->assertEquals($incorrectOtp, $e->otp());
-                $this->assertEquals($phoneNumber, $e->phone());
+                $this->assertEquals($phone, $e->phone());
             }
         }
 
         //correct otp still works
-        $self = $manager->complete($phoneNumber, $otp);
+        $self = $manager->complete($phone, $otp);
         $this->assertEquals($manager, $self);
     }
 

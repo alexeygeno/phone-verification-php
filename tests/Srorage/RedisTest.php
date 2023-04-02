@@ -28,7 +28,7 @@ final class RedisTest extends TestCase
     protected function  setUp():void{
         /** @var Client $redisMock */
         $redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
-        //new mock storage foe every test
+        //new mock storage for every test
         $redisMock->flushdb();
         $this->redisStorage =   new Redis($redisMock);
     }
@@ -52,7 +52,7 @@ final class RedisTest extends TestCase
     public function testSessionSetupWithReset($phone):void
     {
         $this->redisStorage->setupSession($phone, 1233, 300)
-            ->setupSession($phone, 32104, 20, true); //recreate session
+                           ->setupSession($phone, 32104, 20, true); //recreate session
 
         $this->assertEquals(32104, $this->redisStorage->otp($phone));
 
@@ -127,17 +127,17 @@ final class RedisTest extends TestCase
      * @dataProvider phoneNumbers
      * @runInSeparateProcess
      */
-    public function testSessionExpiration($phoneNumber): void
+    public function testSessionExpiration($phone): void
     {
         //emulate like it's been 20 seconds between the setupSession call and the otp call
         $time = $this->getFunctionMock('M6Web\Component\RedisMock', "time");
         $time->expects($this->exactly(2))->willReturnOnConsecutiveCalls(0, 20);
 
         //set expiration to 10 seconds
-        $this->redisStorage->setupSession($phoneNumber, 566743, 10);
+        $this->redisStorage->setupSession($phone, 566743, 10);
 
         //check that session doesn't exists
-        $otp = $this->redisStorage->otp($phoneNumber);
+        $otp = $this->redisStorage->otp($phone);
         $this->assertEquals(0, $otp);
     }
 

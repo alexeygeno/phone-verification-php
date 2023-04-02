@@ -21,11 +21,11 @@ final class Test extends BaseTest
     /**
      * @dataProvider phoneNumbers
      */
-    public function testCorrectOtp($phoneNumber):void
+    public function testCorrectOtp($phone):void
     {
-        $otp = $this->manager->start($phoneNumber);
+        $otp = $this->manager->start($phone);
         $this->assertIsInt($otp);
-        $self = $this->manager->complete($phoneNumber, $otp);
+        $self = $this->manager->complete($phone, $otp);
         $this->assertEquals($self, $this->manager);
     }
 
@@ -43,17 +43,17 @@ final class Test extends BaseTest
     /**
      * @dataProvider phoneNumbers
      */
-    public function testIncorrectOtpException($phoneNumber):void
+    public function testIncorrectOtpException($phone):void
     {
-        $otp = $this->manager->start($phoneNumber);
+        $otp = $this->manager->start($phone);
         $this->assertGreaterThan(0, $otp);
         $incorrectOtp = $otp-1;
         try {
-            $this->manager->complete($phoneNumber, $incorrectOtp);
+            $this->manager->complete($phone, $incorrectOtp);
             $this->fail('ExpiredOtp was not thrown');
         }catch  (WrongOtp $e){
             $this->assertEquals($incorrectOtp, $e->otp());
-            $this->assertEquals($phoneNumber, $e->phone());
+            $this->assertEquals($phone, $e->phone());
         }
     }
 
@@ -73,19 +73,19 @@ final class Test extends BaseTest
     /**
      * @dataProvider phoneNumbers
      */
-    public function testExpiredOtpException($phoneNumber):void
+    public function testExpiredOtpException($phone):void
     {
-        $otp = $this->manager->start($phoneNumber);
+        $otp = $this->manager->start($phone);
         $this->assertIsInt($otp);
         $this->assertGreaterThan(0, $otp);
-        $this->storageMock->resetSession($phoneNumber);//emulate expiration
+        $this->storageMock->resetSession($phone);//emulate expiration
 
         try {
-            $this->manager->complete($phoneNumber, $otp);
+            $this->manager->complete($phone, $otp);
             $this->fail('ExpiredOtp was not thrown');
         }catch  (ExpiredOtp $e){
             $this->assertEquals($otp, $e->otp());
-            $this->assertEquals($phoneNumber, $e->phone());
+            $this->assertEquals($phone, $e->phone());
         }
     }
 
@@ -93,12 +93,12 @@ final class Test extends BaseTest
     /**
      * @dataProvider phoneNumbers
      */
-    public function testNonExpiredOtp($phoneNumber):void
+    public function testNonExpiredOtp($phone):void
     {
-        $otp = $this->manager->start($phoneNumber);
+        $otp = $this->manager->start($phone);
         $this->assertIsInt($otp);
 
-        $self = $this->manager->complete($phoneNumber, $otp);
+        $self = $this->manager->complete($phone, $otp);
         $this->assertEquals($this->manager, $self);
     }
 
