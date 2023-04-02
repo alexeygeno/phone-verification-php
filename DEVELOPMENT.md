@@ -9,7 +9,7 @@ docker-compose down
 ````
 
 
-#Tests
+#Unit Tests
 Run a single Method
 ````
 vendor/bin/phpunit --filter 'AlexGeno\\PhoneVerificationTests\\Manager\\ManagerTest::testMaxAttemptsNotExceeded'  --debug
@@ -17,4 +17,14 @@ vendor/bin/phpunit --filter 'AlexGeno\\PhoneVerificationTests\\Manager\\ManagerT
 Check code coverage
 ````
 vendor/bin/phpunit --coverage-text
+````
+#Code Sniffer
+Check
+````
+vendor/bin/phpcs --standard=PSR12 src
+````
+
+Fix
+````
+vendor/bin/phpcbf --standard=PSR12 src
 ````
