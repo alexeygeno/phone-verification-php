@@ -1,0 +1,38 @@
+{
+  "name": "alexeygeno/phone-verification-php",
+  "description":"A php package to verify a user via phone",
+  "keywords":["otp","phone", "verification", "sms", "call", "2fa", "2factor","authentication"],
+  "type":"library",
+  "license":"MIT",
+  "authors":[
+    {
+      "name":"Alexey Geno",
+      "email": "alexeygeno@gmail.com",
+      "homepage":"https://linkedin.com/in/alexeygeno"
+    }
+  ],
+  "homepage": "https://github.com/alexeygeno/phone-verification-php",
+  "autoload": {
+    "psr-4": {
+      "AlexGeno\\PhoneVerification\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "AlexGeno\\PhoneVerificationTests\\": "tests/"
+    }
+  },
+  "require":{
+    "php":"^7.4",
+    "predis/predis": "^2.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.0",
+    "squizlabs/php_codesniffer": "^3.7",
+    "php-mock/php-mock-phpunit": "^2.7",
+    "m6web/redis-mock": "^5.5"
+  },
+  "suggest": {
+    "predis/predis": "Required to use Redis storage"
+  }
+}

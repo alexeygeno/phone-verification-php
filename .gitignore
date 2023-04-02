@@ -1,0 +1,6 @@
+/vendor
+/docker
+docker-compose.yml
+composer.lock
+.phpunit.result.cache
+.idea
