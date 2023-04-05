@@ -3,16 +3,15 @@
 namespace AlexGeno\PhoneVerification;
 
 use AlexGeno\PhoneVerification\Exception\MaxAttemptsExceeded;
-use AlexGeno\PhoneVerification\Storage\I;
 
 class Manager
 {
     protected array $config;
-    protected I $storage;
-    protected Provider\I $provider;
+    protected \AlexGeno\PhoneVerification\Storage\I $storage;
+    protected \AlexGeno\PhoneVerification\Sender\I $sender;
     protected int $otpMin;
     protected int $otpMax;
-    public function __construct(I $storage, Provider\I $provider, array $config = array())
+    public function __construct(\AlexGeno\PhoneVerification\Storage\I $storage, \AlexGeno\PhoneVerification\Sender\I $sender, array $config = array())
     {
         $this->config = array_merge(array(
             'otp_length' => 4,
@@ -22,7 +21,7 @@ class Manager
             'storage_key_prefix' => 'pv:1'
         ), $config);
         $this->storage = $storage;
-        $this->provider = $provider;
+        $this->sender = $sender;
 
         $otpLength = (int)$this->config['otp_length'];
         $this->otpMin = pow(10, $otpLength - 1);
@@ -38,7 +37,7 @@ class Manager
 
         $otp = rand($this->otpMin, $this->otpMax);
         $message = sprintf($this->config['message'], $otp);
-        $this->provider->sms($phone, $message);
+        $this->sender->invoke($phone, $message);
         $this->storage->setupSession($phone, $otp, $this->config['otp_exp_period']);
         return $otp;
     }
