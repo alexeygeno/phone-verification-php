@@ -19,7 +19,7 @@ final class RedisTest extends TestCase
     {
         return [
             'UKR' => ['+380935258272'],
-            'US'  => ['+15417543010'],
+            'US'  => ['5417543010'],
             'UK'  => ['+442077206312']
         ];
     }
@@ -119,7 +119,7 @@ final class RedisTest extends TestCase
     public function testNonExistingOtp($phone):void
     {
         $this->redisStorage->setupSession($phone, 566743, 300);
-        $this->assertEquals(0, $this->redisStorage->otp('+35926663454'));//phone with no otp created beforehand
+        $this->assertEquals(0, $this->redisStorage->otp('+35926663454'));//phone with no session created beforehand
     }
 
 

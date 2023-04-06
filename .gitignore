@@ -4,3 +4,4 @@ docker-compose.yml
 composer.lock
 .phpunit.result.cache
 .idea
+/phpunit.xml.dist.bak

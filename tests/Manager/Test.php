@@ -15,7 +15,7 @@ final class Test extends BaseTest
 
     protected function  setUp():void{
         parent::setUp();
-        $this->manager = new Manager($this->storageMock, $this->providerMock);
+        $this->manager = new Manager($this->storageMock, $this->senderMock);
     }
 
     /**
@@ -45,6 +45,8 @@ final class Test extends BaseTest
      */
     public function testIncorrectOtpException($phone):void
     {
+
+
         $otp = $this->manager->start($phone);
         $this->assertGreaterThan(0, $otp);
         $incorrectOtp = $otp-1;

@@ -17,8 +17,7 @@ class Manager
             'otp_length' => 4,
             'otp_exp_period' => 300,
             'max_attempts' => 5,
-            'message' => "Your code is %d",
-            'storage_key_prefix' => 'pv:1'
+            'message' => "Your code is %d", //will be processed by sprintf
         ), $config);
         $this->storage = $storage;
         $this->sender = $sender;

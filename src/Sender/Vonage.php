@@ -5,6 +5,11 @@ namespace AlexGeno\PhoneVerification\Sender;
 use Vonage\Client;
 use Vonage\SMS\Message\SMS;
 
+/**
+ * Class Vonage
+ * @see https://developer.vonage.com/en/messaging/sms/code-snippets/send-an-sms-with-unicode
+ * @package AlexGeno\PhoneVerification\Sender
+ */
 class Vonage implements I{
 
     protected Client $client;
@@ -15,8 +20,8 @@ class Vonage implements I{
         $this->brandName = $brandName;
     }
 
-    public function invoke(string $to, string $text):bool{
-        $this->client->sms()->send(
+    public function invoke(string $to, string $text){
+        return $this->client->sms()->send(
             new SMS($to, $this->brandName, $text, 'unicode')
         );
     }

@@ -35,7 +35,7 @@ final class ConfigTest extends BaseTest
      */
     public function testMaxAttemptsExceeded($phone):void
     {
-        $manager = new Manager($this->storageMock,  $this->providerMock, ['max_attempts' => self::MAX_ATTEMPTS, 'otp_exp_period' => self::OTP_EXP_PERIOD]);
+        $manager = new Manager($this->storageMock,  $this->senderMock, ['max_attempts' => self::MAX_ATTEMPTS, 'otp_exp_period' => self::OTP_EXP_PERIOD]);
         $otp = $manager->start($phone);
         $this->assertGreaterThan(0, $otp);
 
@@ -69,7 +69,7 @@ final class ConfigTest extends BaseTest
      */
     public function testMaxAttempts($phone):void
     {
-        $manager = new Manager($this->storageMock,  $this->providerMock, ['max_attempts' => self::MAX_ATTEMPTS]);
+        $manager = new Manager($this->storageMock,  $this->senderMock, ['max_attempts' => self::MAX_ATTEMPTS]);
         $otp = $manager->start($phone);
         $this->assertGreaterThan(0, $otp);
 
@@ -97,7 +97,7 @@ final class ConfigTest extends BaseTest
      */
     public function testOtpLength($phone, $otpLength, $min, $max, $any):void
     {
-        $manager = new Manager($this->storageMock, $this->providerMock, ['otp_length' => $otpLength]);
+        $manager = new Manager($this->storageMock, $this->senderMock, ['otp_length' => $otpLength]);
 
         $rand = $this->getFunctionMock('AlexGeno\PhoneVerification', "rand");
         $rand->expects($this->once())->with($min, $max)->willReturn($any);
