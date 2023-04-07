@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 namespace AlexGeno\PhoneVerificationTests\Storage;
 
-use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
+use phpmock\phpunit\PHPMock;
+
 
 use AlexGeno\PhoneVerification\Storage\Redis;
 use M6Web\Component\RedisMock\RedisMockFactory;
@@ -28,8 +29,6 @@ final class RedisTest extends TestCase
     protected function  setUp():void{
         /** @var Client $redisMock */
         $redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
-        //new mock storage for every test
-        $redisMock->flushdb();
         $this->redisStorage =   new Redis($redisMock);
     }
 
@@ -40,8 +39,7 @@ final class RedisTest extends TestCase
     public function testSessionSetup($phone):void
     {
 
-        $this->redisStorage->setupSession($phone, 12340, 300)
-                           ->setupSession($phone, 12345, 10); //no session recreation
+        $this->redisStorage->setupSession($phone, 12340, 300);
 
         $this->assertEquals(12340, $this->redisStorage->otp($phone));
     }
@@ -49,25 +47,13 @@ final class RedisTest extends TestCase
     /**
      * @dataProvider phoneNumbers
      */
-    public function testSessionSetupWithReset($phone):void
+    public function testSessionReSetup($phone):void
     {
         $this->redisStorage->setupSession($phone, 1233, 300)
-                           ->setupSession($phone, 32104, 20, true); //recreate session
+                           ->setupSession($phone, 32104, 20); //recreate session
 
         $this->assertEquals(32104, $this->redisStorage->otp($phone));
 
-    }
-
-    /**
-     * @dataProvider phoneNumbers
-     */
-    public function testSessionSetupWithNoReset($phone):void
-    {
-
-        $this->redisStorage->setupSession($phone, 12340, 300)
-                           ->setupSession($phone, 12345, 300); //no session recreation
-
-        $this->assertEquals(12340, $this->redisStorage->otp($phone));
     }
 
     /**

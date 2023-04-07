@@ -6,50 +6,57 @@ use Predis\Client;
 
 class Redis implements I
 {
-    private Client $redis;
+    protected Client $redis;
+    protected array $config;
 
     /**
-     * Redis Storage!
      *
      * @param Client $redis
+     * @param array $config
      */
-    public function __construct(Client $redis)
+    public function __construct(Client $redis, array $config = [])
     {
         $this->redis = $redis;
+        $this->config = array_merge(['prefix' => 'pvs:1'], $config);
+    }
+
+    private function key(string $key): string
+    {
+        return $this->config['prefix'] . $key;
     }
 
 
-    public function setupSession(string $phone, int $otp, int $expirationSecs, $reset = false): I
+    public function setupSession(string $id, int $otp, int $expirationSecs/*, $reset = false*/): I
     {
         $this->redis->multi();
-        if ($reset) {
-            $this->resetSession($phone);
-        }
-        $this->redis->hsetnx("s:$phone", 'otp', $otp);
-        $this->redis->hsetnx("s:$phone", 'attempts', 0);
-        $this->redis->expire("s:$phone", $expirationSecs, 'NX');
+//        if ($reset) {
+//            $this->resetSession($phone);
+//        }
+        $this->redis->hset($this->key("s:$id"), 'otp', $otp);
+        $this->redis->hset($this->key("s:$id"), 'attempts', 0);
+        $this->redis->expire($this->key("s:$id"), $expirationSecs, 'GT');
         $this->redis->exec();
         return $this;
     }
-    public function resetSession(string $phone): I
+    public function resetSession(string $id): I
     {
-        $this->redis->del("s:$phone");
+        $this->redis->del($this->key("s:$id"));
         return $this;
     }
 
-    public function otp(string $phone): int
+    public function otp(string $sessionId): int
     {
-        $otp = $this->redis->hget("s:$phone", 'otp');
+        $otp = $this->redis->hget($this->key("s:$sessionId"), 'otp');
         return  $otp ?? 0;
     }
 
-    public function incrementAttempts(string $phone): I
+    public function incrementAttempts(string $sessionId): I
     {
-        $this->redis->hincrby("s:$phone", 'attempts', 1);
+        $this->redis->hincrby($this->key("s:$sessionId"), 'attempts', 1);
         return $this;
     }
-    public function attemptsCount(string $phone): int
+    public function attemptsCount(string $sessionId): int
     {
-        return (int)$this->redis->hget("s:$phone", 'attempts');
+        return (int)$this->redis->hget($this->key("s:$sessionId"), 'attempts');
     }
 }
