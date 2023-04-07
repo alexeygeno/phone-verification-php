@@ -13,9 +13,15 @@ class Manager
     protected int $otpMax;
     public function __construct(\AlexGeno\PhoneVerification\Storage\I $storage, \AlexGeno\PhoneVerification\Sender\I $sender, array $config = array())
     {
-        $this->config = array_merge(array(
+        $this->config = array_replace_recursive(array(
             'otp_length' => 4,
-            'otp_exp_period' => 300,
+            'otp_exp_period' => 300, //5 min
+            'session_exp_period' => 3600, //1 hour
+            //not implemented yet
+//            'rate_limits' => [
+//                'initiate' => ['period_secs' => 86400, 'count' => 10],  //you can initiate confirmation 10 times per 24 hours
+//                'complete' => ['period_secs' => 300, 'count' => 5]  //you can complete confirmation 5 times per 5 minutes
+//            ],
             'max_attempts' => 5,
             'message' => "Your code is %d", //will be processed by sprintf
         ), $config);
@@ -33,11 +39,10 @@ class Manager
      */
     public function start($phone): int
     {
-
         $otp = rand($this->otpMin, $this->otpMax);
         $message = sprintf($this->config['message'], $otp);
+        $this->storage->sessionUp($phone, $otp, $this->config['otp_exp_period'], $this->config['session_exp_period']);
         $this->sender->invoke($phone, $message);
-        $this->storage->setupSession($phone, $otp, $this->config['otp_exp_period']);
         return $otp;
     }
 
@@ -49,7 +54,7 @@ class Manager
     public function complete(string $phone, int $otp): Manager
     {
 
-        $attempts = $this->storage->attemptsCount($phone);
+        $attempts = $this->storage->otpCheckCounter($phone);
         $maxAttempts = (int)$this->config['max_attempts'];
 
         if ($attempts > $maxAttempts) {
@@ -63,12 +68,12 @@ class Manager
         }
 
         if ($storedOtp !== $otp) {
-            $this->storage->incrementAttempts($phone);
+            $this->storage->otpCheckIncrement($phone);
             throw new \AlexGeno\PhoneVerification\Exception\WrongOtp($phone, $otp);
         }
 
 
-        $this->storage->resetSession($phone);
+        $this->storage->sessionDown($phone);
 
         return $this;
     }

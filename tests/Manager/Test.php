@@ -7,9 +7,7 @@ namespace AlexGeno\PhoneVerificationTests\Manager;
 use AlexGeno\PhoneVerification\Exception\ExpiredOtp;
 use AlexGeno\PhoneVerification\Exception\WrongOtp;
 use AlexGeno\PhoneVerification\Manager;
-use AlexGeno\PhoneVerification\Storage\Redis;
-use M6Web\Component\RedisMock\RedisMockFactory;
-use Predis\Client;
+
 
 final class Test extends BaseTest
 {
@@ -70,7 +68,7 @@ final class Test extends BaseTest
 //        $otp = $this->manager->start($phoneNumber);
 //        $this->assertIsInt($otp);
 //
-//        $this->storageMock->resetSession($phoneNumber);//emulate expiration
+//        $this->storageMock->sessionDown($phoneNumber);//emulate expiration
 //        $this->expectException(ExpiredOtp::class);
 //        $this->manager->complete($phoneNumber, $otp);
 //    }
@@ -83,7 +81,7 @@ final class Test extends BaseTest
         $otp = $this->manager->start($phone);
         $this->assertIsInt($otp);
         $this->assertGreaterThan(0, $otp);
-        $this->storageMock->resetSession($phone);//emulate expiration
+        $this->storageMock->sessionDown($phone);//emulate expiration
 
         try {
             $this->manager->complete($phone, $otp);
