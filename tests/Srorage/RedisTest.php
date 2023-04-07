@@ -1,20 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace AlexGeno\PhoneVerificationTests\Storage;
 
 use PHPUnit\Framework\TestCase;
 use phpmock\phpunit\PHPMock;
-
-
 use AlexGeno\PhoneVerification\Storage\Redis;
 use M6Web\Component\RedisMock\RedisMockFactory;
 use Predis\Client;
 
-
 final class RedisTest extends TestCase
 {
-    private Redis $redisStorage;
-
     use PHPMock;
+
+    private Redis $redisStorage;
 
     public function phoneNumbers(): array
     {
@@ -26,7 +26,8 @@ final class RedisTest extends TestCase
     }
 
 
-    protected function  setUp():void{
+    protected function setUp(): void
+    {
         /** @var Client $redisMock */
         $redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
         $this->redisStorage =   new Redis($redisMock);
@@ -36,7 +37,7 @@ final class RedisTest extends TestCase
     /**
      * @dataProvider phoneNumbers
      */
-    public function testSessionSetup($phone):void
+    public function testSessionSetup($phone): void
     {
 
         $this->redisStorage->setupSession($phone, 12340, 300);
@@ -47,19 +48,18 @@ final class RedisTest extends TestCase
     /**
      * @dataProvider phoneNumbers
      */
-    public function testSessionReSetup($phone):void
+    public function testSessionReSetup($phone): void
     {
         $this->redisStorage->setupSession($phone, 1233, 300)
                            ->setupSession($phone, 32104, 20); //recreate session
 
         $this->assertEquals(32104, $this->redisStorage->otp($phone));
-
     }
 
     /**
      * @dataProvider phoneNumbers
      */
-    public function testSessionReset($phone):void
+    public function testSessionReset($phone): void
     {
 
         $this->redisStorage->setupSession($phone, 1233, 300)
@@ -68,14 +68,13 @@ final class RedisTest extends TestCase
 
         $this->assertEquals(0, $this->redisStorage->otp($phone));
         $this->assertEquals(0, $this->redisStorage->attemptsCount($phone));
-
     }
 
 
     /**
      * @dataProvider phoneNumbers
      */
-    public function testAttempts($phone):void
+    public function testAttempts($phone): void
     {
         $this->redisStorage->setupSession($phone, 2345, 300)
                            ->incrementAttempts($phone);//first attempt
@@ -86,13 +85,12 @@ final class RedisTest extends TestCase
         $this->redisStorage->incrementAttempts($phone)->incrementAttempts($phone);
 
         $this->assertEquals(3, $this->redisStorage->attemptsCount($phone));
-
     }
 
     /**
      * @dataProvider phoneNumbers
      */
-    public function testExistingOtp($phone):void
+    public function testExistingOtp($phone): void
     {
         $otp = 566743;
         $this->redisStorage->setupSession($phone, $otp, 300);
@@ -102,7 +100,7 @@ final class RedisTest extends TestCase
     /**
      * @dataProvider phoneNumbers
      */
-    public function testNonExistingOtp($phone):void
+    public function testNonExistingOtp($phone): void
     {
         $this->redisStorage->setupSession($phone, 566743, 300);
         $this->assertEquals(0, $this->redisStorage->otp('+35926663454'));//phone with no session created beforehand
@@ -126,5 +124,4 @@ final class RedisTest extends TestCase
         $otp = $this->redisStorage->otp($phone);
         $this->assertEquals(0, $otp);
     }
-
 }

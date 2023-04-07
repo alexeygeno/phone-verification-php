@@ -10,22 +10,23 @@ use Twilio\Rest\Client;
  * @see https://www.twilio.com/docs/sms/api/message-resource
  * @package AlexGeno\PhoneVerification\Sender
  */
-class Twilio implements I{
+class Twilio implements I
+{
+    protected Client $client;
+    protected array $options;
 
-	protected Client $client;
-	protected array $options;
+    public function __construct(Client $client, array $options)
+    {
+        $this->client = $client;
+        $this->options = $options;
+    }
 
-	public function __construct(Client $client, array $options){
-		$this->client = $client;
-		$this->options = $options;
-	}
-
-	public function invoke(string $to, string $text){
-		return
+    public function invoke(string $to, string $text)
+    {
+        return
             $this->client->messages->create(
-            $to,
-			array_merge($this->options, ['body' => $text])
-		);
-	}
-
+                $to,
+                array_merge($this->options, ['body' => $text])
+            );
+    }
 }

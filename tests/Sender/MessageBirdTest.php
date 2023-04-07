@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace AlexGeno\PhoneVerificationTests\Sender;
 
 use PHPUnit\Framework\TestCase;
 
-final class MessageBirdTest extends TestCase {
-
+final class MessageBirdTest extends TestCase
+{
     public function clientData(): array
     {
         return [
@@ -16,7 +19,8 @@ final class MessageBirdTest extends TestCase {
     /**
      * @dataProvider clientData
      */
-    public function testInvoke($from, $to, $text){
+    public function testInvoke($from, $to, $text)
+    {
         $clientMock = $this->getMockBuilder('\MessageBird\Client')->disableOriginalConstructor()->getMock();
 
         $messagesMock = $this->createMock('\MessageBird\Resources\Messages');
@@ -34,7 +38,5 @@ final class MessageBirdTest extends TestCase {
 
         $sender = new \AlexGeno\PhoneVerification\Sender\MessageBird($clientMock, $messageMock);
         $sender->invoke($to, $text);
-
     }
-
 }

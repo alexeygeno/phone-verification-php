@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace AlexGeno\PhoneVerificationTests\Manager;
 
 use AlexGeno\PhoneVerification\Exception\ExpiredOtp;
@@ -8,12 +11,12 @@ use AlexGeno\PhoneVerification\Storage\Redis;
 use M6Web\Component\RedisMock\RedisMockFactory;
 use Predis\Client;
 
-
 final class Test extends BaseTest
 {
     protected Manager $manager;
 
-    protected function  setUp():void{
+    protected function setUp(): void
+    {
         parent::setUp();
         $this->manager = new Manager($this->storageMock, $this->senderMock);
     }
@@ -21,7 +24,7 @@ final class Test extends BaseTest
     /**
      * @dataProvider phoneNumbers
      */
-    public function testCorrectOtp($phone):void
+    public function testCorrectOtp($phone): void
     {
         $otp = $this->manager->start($phone);
         $this->assertIsInt($otp);
@@ -43,17 +46,17 @@ final class Test extends BaseTest
     /**
      * @dataProvider phoneNumbers
      */
-    public function testIncorrectOtpException($phone):void
+    public function testIncorrectOtpException($phone): void
     {
 
 
         $otp = $this->manager->start($phone);
         $this->assertGreaterThan(0, $otp);
-        $incorrectOtp = $otp-1;
+        $incorrectOtp = $otp - 1;
         try {
             $this->manager->complete($phone, $incorrectOtp);
             $this->fail('ExpiredOtp was not thrown');
-        }catch  (WrongOtp $e){
+        } catch (WrongOtp $e) {
             $this->assertEquals($incorrectOtp, $e->otp());
             $this->assertEquals($phone, $e->phone());
         }
@@ -75,7 +78,7 @@ final class Test extends BaseTest
     /**
      * @dataProvider phoneNumbers
      */
-    public function testExpiredOtpException($phone):void
+    public function testExpiredOtpException($phone): void
     {
         $otp = $this->manager->start($phone);
         $this->assertIsInt($otp);
@@ -85,7 +88,7 @@ final class Test extends BaseTest
         try {
             $this->manager->complete($phone, $otp);
             $this->fail('ExpiredOtp was not thrown');
-        }catch  (ExpiredOtp $e){
+        } catch (ExpiredOtp $e) {
             $this->assertEquals($otp, $e->otp());
             $this->assertEquals($phone, $e->phone());
         }
@@ -95,7 +98,7 @@ final class Test extends BaseTest
     /**
      * @dataProvider phoneNumbers
      */
-    public function testNonExpiredOtp($phone):void
+    public function testNonExpiredOtp($phone): void
     {
         $otp = $this->manager->start($phone);
         $this->assertIsInt($otp);
@@ -103,5 +106,4 @@ final class Test extends BaseTest
         $self = $this->manager->complete($phone, $otp);
         $this->assertEquals($this->manager, $self);
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace AlexGeno\PhoneVerification\Storage;
 
-use MongoDb\BSON\ObjectId;
 use MongoDB\Client;
 use MongoDB\Collection;
 

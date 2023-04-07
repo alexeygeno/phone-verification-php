@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace AlexGeno\PhoneVerificationTests\Storage;
 
 use PHPUnit\Framework\TestCase;
 use Helmich\MongoMock\MockDatabase;
 use AlexGeno\PhoneVerification\Storage\MongoDb;
-
 
 final class MongoDbTest extends TestCase
 {
@@ -43,7 +45,7 @@ final class MongoDbTest extends TestCase
     /**
      * @dataProvider phoneNumbers
      */
-    public function testSessionReSetup($phone):void
+    public function testSessionReSetup($phone): void
     {
         $this->mongoDbStorage->setupSession($phone, 1233, 300)
                             ->setupSession($phone, 32104, 20); //recreate session
@@ -53,7 +55,7 @@ final class MongoDbTest extends TestCase
     /**
      * @dataProvider phoneNumbers
      */
-    public function testSessionReset($phone):void
+    public function testSessionReset($phone): void
     {
 
         $this->mongoDbStorage->setupSession($phone, 1233, 300)
@@ -62,14 +64,13 @@ final class MongoDbTest extends TestCase
 
         $this->assertEquals(0, $this->mongoDbStorage->otp($phone));
         $this->assertEquals(0, $this->mongoDbStorage->attemptsCount($phone));
-
     }
 
 
     /**
      * @dataProvider phoneNumbers
      */
-    public function testAttempts($phone):void
+    public function testAttempts($phone): void
     {
         $this->mongoDbStorage->setupSession($phone, 2345, 300)
             ->incrementAttempts($phone);//first attempt
@@ -80,13 +81,12 @@ final class MongoDbTest extends TestCase
         $this->mongoDbStorage->incrementAttempts($phone)->incrementAttempts($phone);
 
         $this->assertEquals(3, $this->mongoDbStorage->attemptsCount($phone));
-
     }
 
     /**
      * @dataProvider phoneNumbers
      */
-    public function testExistingOtp($phone):void
+    public function testExistingOtp($phone): void
     {
         $otp = 566743;
         $this->mongoDbStorage->setupSession($phone, $otp, 300);
@@ -96,7 +96,7 @@ final class MongoDbTest extends TestCase
     /**
      * @dataProvider phoneNumbers
      */
-    public function testNonExistingOtp($phone):void
+    public function testNonExistingOtp($phone): void
     {
         $this->mongoDbStorage->setupSession($phone, 566743, 300);
         $this->assertEquals(0, $this->mongoDbStorage->otp('+35926663454'));//phone with no session created beforehand

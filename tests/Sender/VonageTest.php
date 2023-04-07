@@ -1,11 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace AlexGeno\PhoneVerificationTests\Sender;
 
 use PHPUnit\Framework\TestCase;
 use Vonage\SMS\Message\SMS;
 
-final class VonageTest extends TestCase {
-
+final class VonageTest extends TestCase
+{
     public function clientData(): array
     {
         return [
@@ -17,7 +20,8 @@ final class VonageTest extends TestCase {
     /**
      * @dataProvider clientData
      */
-    public function testInvoke($from, $to, $text){
+    public function testInvoke($from, $to, $text)
+    {
         $clientMock = $this->getMockBuilder('\Vonage\Client')->disableOriginalConstructor()->getMock();
 
         $smsClientMock = $this->createMock('\Vonage\SMS\Client');
@@ -28,7 +32,5 @@ final class VonageTest extends TestCase {
 
         $sender = new \AlexGeno\PhoneVerification\Sender\Vonage($clientMock, $from);
         $sender->invoke($to, $text);
-
     }
-
 }

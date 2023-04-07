@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace AlexGeno\PhoneVerificationTests\Sender;
 
 use PHPUnit\Framework\TestCase;
 
-final class TwilioTest extends TestCase {
-
+final class TwilioTest extends TestCase
+{
     public function clientData(): array
     {
         return [
@@ -16,18 +19,17 @@ final class TwilioTest extends TestCase {
     /**
      * @dataProvider clientData
      */
-    public function testInvoke($from, $to, $text){
+    public function testInvoke($from, $to, $text)
+    {
         $clientMock = $this->getMockBuilder('\Twilio\Rest\Client')->disableOriginalConstructor()->getMock();
 
         $messageListMock = $this->createMock('\Twilio\Rest\Api\V2010\Account\MessageList');
 
-        $messageListMock->expects($this->once())->method('create')->with($to, ['from'=>$from,'body'=> $text]);
+        $messageListMock->expects($this->once())->method('create')->with($to, ['from' => $from,'body' => $text]);
 
         $clientMock->expects($this->once())->method('__get')->with('messages')->willReturn($messageListMock);
 
         $sender = new \AlexGeno\PhoneVerification\Sender\Twilio($clientMock, ['from' => $from]);
         $sender->invoke($to, $text);
-
     }
-
 }
