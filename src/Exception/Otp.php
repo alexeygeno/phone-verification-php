@@ -2,7 +2,7 @@
 
 namespace AlexGeno\PhoneVerification\Exception;
 
-class ExpiredOtp extends \Exception
+class Otp extends \Exception
 {
     protected string $phone;
     protected int $otp;

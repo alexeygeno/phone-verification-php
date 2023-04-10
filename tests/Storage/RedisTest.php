@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace AlexGeno\PhoneVerificationTests\Storage;
 
-use PHPUnit\Framework\TestCase;
 use phpmock\phpunit\PHPMock;
 use AlexGeno\PhoneVerification\Storage\Redis;
 use M6Web\Component\RedisMock\RedisMockFactory;
 use Predis\Client;
 
+/**
+ * Class RedisTest
+ * @package AlexGeno\PhoneVerificationTests\Storage
+ */
 final class RedisTest extends BaseTest
 {
     use PHPMock;
@@ -18,7 +21,11 @@ final class RedisTest extends BaseTest
     {
         /** @var Client $redisMock */
         $redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
-        $this->storage =   new Redis($redisMock);
+        $redisMock->flushdb();
+//        $redisMock = new \Predis\Client('redis://redis:6379');
+//        $redisMock->flushall();
+
+        $this->storage = new Redis($redisMock);
     }
 
     /**

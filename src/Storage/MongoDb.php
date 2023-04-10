@@ -47,16 +47,13 @@ class MongoDb implements I
         $this->collection($this->config['collection_session'])->createIndex(['id' => 1], ['unique' => true]);
         $this->collection($this->config['collection_session'])->createIndex(['created' => 1], ['expireAfterSeconds' => $sessionExpSecs]);
 
-        //session counter upsert
-        $sessionCounter = [
-            'id' => $sessionId,
-            'created' =>  new \MongoDb\BSON\UTCDateTime()
-        ];
 
-        $this->collection($this->config['collection_session_counter'])->updateOne(['id' => $sessionId], ['$set' => $sessionCounter, '$inc' => ['count' => 1]], ['upsert' => true]);
+        $setOnInsert = ['id' => $sessionId,  'updated' =>  new \MongoDb\BSON\UTCDateTime()];
+
+        $this->collection($this->config['collection_session_counter'])->updateOne(['id' => $sessionId], ['$setOnInsert' => $setOnInsert, '$inc' => ['count' => 1]], ['upsert' => true]);
         //indexes
         $this->collection($this->config['collection_session_counter'])->createIndex(['id' => 1], ['unique' => true]);
-        $this->collection($this->config['collection_session_counter'])->createIndex(['created' => 1], ['expireAfterSeconds' => $sessionExpSecs]);
+        $this->collection($this->config['collection_session_counter'])->createIndex(['updated' => 1], ['expireAfterSeconds' => $sessionCounterExpSecs]);
 
         return $this;
     }
@@ -68,7 +65,7 @@ class MongoDb implements I
 
     public function otp(string $sessionId): int
     {
-        $session = $this->collection($this->config['collection_session'])->findOne(['id' => $sessionId], ['projection' => 'otp']);
+        $session = $this->collection($this->config['collection_session'])->findOne(['id' => $sessionId], ['projection' => ['otp' => 1]]);
         return  ($session and !empty($session->otp)) ? $session->otp :  0;
     }
 
@@ -79,11 +76,13 @@ class MongoDb implements I
     }
     public function otpCheckCounter(string $sessionId): int
     {
-        $session = $this->collection($this->config['collection_session'])->findOne(['id' => $sessionId], ['projection' => 'attempts']);
+        $session = $this->collection($this->config['collection_session'])->findOne(['id' => $sessionId], ['projection' => ['attempts' => 1]]);
         return  ($session and !empty($session->attempts)) ? $session->attempts :  0;
     }
 
     public function sessionCounter(string $sessionId): int{
-        $this->collection($this->config['collection_session_counter'])->updateOne(['id' => $sessionId], ['$inc' => ['count' => 1]]);
+        $sessionCounter = $this->collection($this->config['collection_session_counter'])->findOne(['id' => $sessionId], ['projection' => ['count' => 1]]);
+        return  ($sessionCounter and !empty($sessionCounter->count)) ? $sessionCounter->count : 0;
+
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AlexGeno\PhoneVerificationTests\Manager;
 
-use AlexGeno\PhoneVerification\Sender\Twilio;
 use AlexGeno\PhoneVerification\Storage\Redis;
 use M6Web\Component\RedisMock\RedisMockFactory;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +18,6 @@ abstract class BaseTest extends TestCase
     {
         $this->senderMock = $this->createStub('AlexGeno\PhoneVerification\Sender\Twilio');
         $redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
-        $redisMock->flushdb();
         $this->storageMock  = new Redis($redisMock);
     }
 

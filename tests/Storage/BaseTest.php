@@ -35,7 +35,7 @@ abstract class BaseTest extends TestCase
     public function testSessionReSetup($phone): void
     {
         $this->storage->sessionUp($phone, 1233, 300, 3600*2)
-                            ->sessionUp($phone, 32104, 20, 3600*2); //recreate session
+                      ->sessionUp($phone, 32104, 300, 3600*2); //session recreation
         $this->assertEquals(32104, $this->storage->otp($phone));
     }
 
@@ -57,9 +57,9 @@ abstract class BaseTest extends TestCase
     /**
      * @dataProvider phoneNumbers
      */
-    public function testAttempts($phone): void
+    public function testOtpCheckCounter($phone): void
     {
-        $this->storage->sessionUp($phone, 2345, 300, 3600*2)
+        $this->storage->sessionUp($phone, 2345, 300, 3600*3)
             ->otpCheckIncrement($phone);//first attempt
 
         $this->assertEquals(1, $this->storage->otpCheckCounter($phone));
@@ -70,14 +70,15 @@ abstract class BaseTest extends TestCase
         $this->assertEquals(3, $this->storage->otpCheckCounter($phone));
     }
 
+
     /**
      * @dataProvider phoneNumbers
      */
-    public function testExistingOtp($phone): void
+    public function testSessionDown($phone): void
     {
-        $otp = 566743;
-        $this->storage->sessionUp($phone, $otp, 300, 3600*3);
-        $this->assertEquals($otp, $this->storage->otp($phone));
+        $this->storage->sessionUp($phone, 566743, 300, 3600*4);
+        $this->storage->sessionDown($phone);
+        $this->assertEquals(0, $this->storage->otp($phone));
     }
 
     /**
@@ -88,4 +89,24 @@ abstract class BaseTest extends TestCase
         $this->storage->sessionUp($phone, 566743, 300, 3600*4);
         $this->assertEquals(0, $this->storage->otp('+35926663454'));//phone with no session created beforehand
     }
+
+    /**
+     * @dataProvider phoneNumbers
+     */
+    public function testSessionCounter($phone): void
+    {
+        $otp = 2222;
+        $sessionExpSecs = 60;
+        $sessionCounterExpSecs = 60;
+        $this->storage->sessionUp($phone, $otp, $sessionExpSecs, $sessionCounterExpSecs);
+
+        $this->assertEquals(1, $this->storage->sessionCounter($phone));
+
+        //2 more session creation
+        $this->storage->sessionUp($phone, $otp, $sessionExpSecs, $sessionCounterExpSecs)
+            ->sessionUp($phone, $otp, $sessionExpSecs, $sessionCounterExpSecs);
+
+        $this->assertEquals(3, $this->storage->sessionCounter($phone));
+    }
+
 }
