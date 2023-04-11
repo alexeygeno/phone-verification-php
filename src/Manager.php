@@ -3,6 +3,9 @@
 namespace AlexGeno\PhoneVerification;
 
 
+use AlexGeno\PhoneVerification\Exception\Otp;
+use AlexGeno\PhoneVerification\Exception\RateLimit;
+
 class Manager
 {
     protected array $config;
@@ -21,15 +24,29 @@ class Manager
     public function __construct(\AlexGeno\PhoneVerification\Storage\I $storage, \AlexGeno\PhoneVerification\Sender\I $sender, array $config = [])
     {
         $this->config = array_replace_recursive([
-            'otp' => ['length' => 4, 'message' =>  (fn($otp) => sprintf('Your code is %d', $otp))],
+            'otp' => [
+                'length' => 4,
+                'message' =>  (fn($otp) => sprintf('Your code is %d', $otp)),
+                'message_incorrect' =>  fn($otp) => 'Code is incorrect',
+                'message_expired' =>  fn($otp) => 'Code is expired',
+            ],
             'rate_limits' => [
-                'initiate' => ['period_secs' => 86400, 'count' => 10],  //you can initiate confirmation 10 times per 24 hours
-                'complete' => ['period_secs' => 300, 'count' => 5]  //you can complete confirmation 5 times per 5 minutes
+                'initiate' => [
+                    //you can initiate confirmation 10 times per 24 hours
+                    'period_secs' => 86400, 'count' => 10,
+                    'message' => (fn($phone, $periodSecs, $count) => (sprintf('You can send only %d sms per %d hours.',
+                                        $count, $periodSecs/60/60)))
+                ],
+                'complete' => [
+                    //you can complete confirmation 5 times per 5 minutes
+                    'period_secs' => 300, 'count' => 5,
+                    'message' => (fn($phone, $periodSecs, $count) => (sprintf('You have been using an incorrect code more than %d times per %d minutes',
+                        $count, $periodSecs/60)))
+                    ]
             ]
         ], $config);
 
-        $callback = $this->config['otp']['message'];
-        if(!($callback instanceof \Closure)){
+        if(!($this->config['otp']['message'] instanceof \Closure)){
             throw new \AlexGeno\PhoneVerification\Exception('Check the config item "otp.message". It must be an anonymous func.');
         }
 
@@ -51,10 +68,11 @@ class Manager
         $otp = rand($this->otpMin, $this->otpMax);
         $message = $this->config['otp']['message']($otp);
 
-        if ($this->storage->sessionCounter($phone) > (int)$this->config['rate_limits']['initiate']['count']) {
-            throw new \AlexGeno\PhoneVerification\Exception\RateLimit('initiate', $this->config['rate_limits']['initiate']);
+        $rateLimit = $this->config['rate_limits']['initiate'];
+        if ($this->storage->sessionCounter($phone) >= (int)$rateLimit['count']) {
+            throw new RateLimit($rateLimit['message']($phone, $rateLimit['period_secs'], $rateLimit['count']),RateLimit::CODE_INITIATE);
         }
-        $this->storage->sessionUp($phone, $otp, $this->config['rate_limits']['complete']['period_secs'], $this->config['rate_limits']['initiate']['period_secs']);
+        $this->storage->sessionUp($phone, $otp, $this->config['rate_limits']['complete']['period_secs'], $rateLimit['period_secs']);
         $this->sender->invoke($phone, $message);
         return $otp;
     }
@@ -65,23 +83,22 @@ class Manager
      */
     public function complete(string $phone, int $otp): Manager
     {
+        $rateLimit = $this->config['rate_limits']['complete'];
 
-        if ($this->storage->otpCheckCounter($phone) > (int)$this->config['rate_limits']['complete']['count']) {
-            throw new \AlexGeno\PhoneVerification\Exception\RateLimit('complete', $this->config['rate_limits']['complete']);
+        if ($this->storage->otpCheckCounter($phone) > (int)$rateLimit['count']) {
+            throw new RateLimit($rateLimit['message']($phone, $rateLimit['period_secs'], $rateLimit['count']), RateLimit::CODE_COMPLETE);
         }
 
         $storedOtp = $this->storage->otp($phone);
 
 
         if ($storedOtp === 0) {
-            //TODO: otp expired
-            //throw new \AlexGeno\PhoneVerification\Exception\Otp($phone, $otp);
+            throw new Otp($this->config['otp']['message_expired']($otp), Otp::CODE_EXPIRED);
         }
-
 
         if ($storedOtp !== $otp) {
             $this->storage->otpCheckIncrement($phone);
-            throw new \AlexGeno\PhoneVerification\Exception\Otp($phone, $otp);
+            throw new Otp($this->config['otp']['message_incorrect']($otp), Otp::CODE_INCORRECT);
         }
 
         //correct otp

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AlexGeno\PhoneVerificationTests\Manager;
 
-use AlexGeno\PhoneVerification\Exception\RateLimit;
 use AlexGeno\PhoneVerification\Exception\Otp;
 use AlexGeno\PhoneVerification\Manager;
 
@@ -41,10 +40,9 @@ final class DefaultConfigTest extends BaseTest
         $incorrectOtp = $otp - 1;
         try {
             $this->manager->complete($phone, $incorrectOtp);
-            $this->fail('Otp was not thrown');
+            $this->fail('Otp has not been thrown');
         } catch (Otp $e) {
-            $this->assertEquals($incorrectOtp, $e->otp());
-            $this->assertEquals($phone, $e->phone());
+            $this->assertEquals(Otp::CODE_INCORRECT, $e->getCode());
         }
     }
 
@@ -60,10 +58,9 @@ final class DefaultConfigTest extends BaseTest
 
         try {
             $this->manager->complete($phone, $otp);
-            $this->fail('Otp was not thrown');
+            $this->fail('Otp has not been thrown');
         } catch (Otp $e) {
-            $this->assertEquals($otp, $e->otp());
-            $this->assertEquals($phone,$e->phone());
+            $this->assertEquals(Otp::CODE_EXPIRED, $e->getCode());
         }
     }
 }

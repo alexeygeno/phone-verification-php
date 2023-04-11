@@ -36,13 +36,12 @@ class MongoDb implements I
 
         //session upsert
         $session = [
-            'id' => $sessionId,
             'otp' => $otp,
             'created' =>  new \MongoDb\BSON\UTCDateTime(),
             'attempts' => 0
         ];
 
-        $this->collection($this->config['collection_session'])->updateOne(['id' => $sessionId], ['$set' => $session], ['upsert' => true]);
+        $this->collection($this->config['collection_session'])->updateOne(['id' => $sessionId], ['$setOnInsert'=> ['id' => $sessionId], '$set' => $session], ['upsert' => true]);
         //indexes
         $this->collection($this->config['collection_session'])->createIndex(['id' => 1], ['unique' => true]);
         $this->collection($this->config['collection_session'])->createIndex(['created' => 1], ['expireAfterSeconds' => $sessionExpSecs]);

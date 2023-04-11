@@ -4,23 +4,11 @@ namespace AlexGeno\PhoneVerification\Exception;
 
 class Otp extends \Exception
 {
-    protected string $phone;
-    protected int $otp;
+    const CODE_INCORRECT = 1;
+    const CODE_EXPIRED = 2;
 
-    public function __construct(string $phone, int $otp, string $message = '')
+    public function __construct( string $message = '', $code = 0, \Throwable $previous = null)
     {
-        parent::__construct($message);
-        $this->phone = $phone;
-        $this->otp = $otp;
-    }
-
-    public function otp(): int
-    {
-        return $this->otp;
-    }
-
-    public function phone(): string
-    {
-        return $this->phone;
+        parent::__construct($message, $code, $previous);
     }
 }

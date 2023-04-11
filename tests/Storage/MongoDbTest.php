@@ -24,6 +24,7 @@ final class MongoDbTest extends BaseTest
 //            ->method('__get')
 //            ->willReturn($mockDatabase);
 
+        //functional
         $mongoDbMock = new \MongoDB\Client('mongodb://mongodb:27017');
         $mongoDbMock->dropDatabase($db);
 

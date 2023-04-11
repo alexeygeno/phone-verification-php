@@ -18,6 +18,7 @@ abstract class BaseTest extends TestCase
     {
         $this->senderMock = $this->createStub('AlexGeno\PhoneVerification\Sender\Twilio');
         $redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
+        $redisMock->flushdb();
         $this->storageMock  = new Redis($redisMock);
     }
 

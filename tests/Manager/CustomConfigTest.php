@@ -4,15 +4,24 @@ declare(strict_types=1);
 
 namespace AlexGeno\PhoneVerificationTests\Manager;
 
+use AlexGeno\PhoneVerification\Exception\Otp;
+use AlexGeno\PhoneVerification\Exception\RateLimit;
 use AlexGeno\PhoneVerification\Manager;
 use phpmock\phpunit\PHPMock;
 
+/**
+ * Class CustomConfigTest
+ * @package AlexGeno\PhoneVerificationTests\Manager
+ */
 final class CustomConfigTest extends BaseTest
 {
     use PHPMock;
 
     const MAX_ATTEMPTS_TO_COMPLETE = 5;
     const PERIOD_SECS_TO_COMPLETE = 200;
+
+    const MAX_ATTEMPTS_TO_INITIATE = 10;
+    const PERIOD_SECS_TO_INITIATE = 3600;
 
     public function otpLengths(): array
     {
@@ -25,14 +34,14 @@ final class CustomConfigTest extends BaseTest
         ];
     }
 
-
      /**
      * @dataProvider phoneNumbers
-     * @runInSeparateProcess
      */
-    public function testMaxAttemptsExceeded($phone): void
+    public function testMaxAttemptsToCompleteExceeded($phone): void
     {
+        $customIncorrectMessage = 'CODE IS SUPER INCORRECT';
         $config = [
+            'otp' => ['message_incorrect' => fn($otp) => $customIncorrectMessage],
             'rate_limits' => [
                 'complete' => ['period_secs' => self::PERIOD_SECS_TO_COMPLETE, 'count' => self::MAX_ATTEMPTS_TO_COMPLETE]
             ]
@@ -47,29 +56,26 @@ final class CustomConfigTest extends BaseTest
             try {
                 $incorrectOtp = $otp + 1;
                 $manager->complete($phone, $incorrectOtp);
-                $this->fail('Otp was not thrown');
-            } catch (\AlexGeno\PhoneVerification\Exception\Otp $e) {
-                $this->assertEquals($incorrectOtp, $e->otp());
-                $this->assertEquals($phone, $e->phone());
+                $this->fail('Otp has not been thrown');
+            } catch (Otp $e) {
+                $this->assertEquals(Otp::CODE_INCORRECT, $e->getCode());
+                $this->assertEquals($customIncorrectMessage, $e->getMessage());
             }
         }
 
         //correct otp doesn't work anymore
         try {
             $manager->complete($phone, $otp); //correct otp
-            $this->fail('RateLimit was not thrown');
-        } catch (\AlexGeno\PhoneVerification\Exception\RateLimit $e) {
-            $limits = $e->limits();
-            $this->assertEquals(self::MAX_ATTEMPTS_TO_COMPLETE, $limits['count']);
-            $this->assertEquals(self::PERIOD_SECS_TO_COMPLETE, $limits['period_secs']);
+            $this->fail('RateLimit has not been not thrown');
+        } catch (RateLimit $e) {
+            $this->assertEquals(RateLimit::CODE_COMPLETE, $e->getCode());
         }
     }
 
     /**
      * @dataProvider phoneNumbers
-     * @runInSeparateProcess
      */
-    public function testMaxAttemptsNotExceeded($phone): void
+    public function testMaxAttemptsToCompleteNotExceeded($phone): void
     {
         $config = [
             'rate_limits' => [
@@ -85,11 +91,11 @@ final class CustomConfigTest extends BaseTest
             //impossible to use expectException because it immediately takes it out of a test method
             try {
                 $incorrectOtp = $otp - 1;
-                $manager->complete($phone, $incorrectOtp); //wrong otp
-                $this->fail('Otp was not thrown');
-            } catch (\AlexGeno\PhoneVerification\Exception\Otp $e) {
-                $this->assertEquals($incorrectOtp, $e->otp());
-                $this->assertEquals($phone, $e->phone());
+                $manager->complete($phone, $incorrectOtp); //incorrect otp
+                $this->fail('Otp has not been thrown');
+            } catch (Otp $e) {
+                $this->assertEquals(Otp::CODE_INCORRECT, $e->getCode());
+                $this->assertEquals('Code is incorrect', $e->getMessage());
             }
         }
 
@@ -97,6 +103,41 @@ final class CustomConfigTest extends BaseTest
         $self = $manager->complete($phone, $otp);
         $this->assertEquals($manager, $self);
     }
+
+
+    /**
+     * @dataProvider phoneNumbers
+     */
+    public function testMaxAttemptsToInitiateExceeded($phone): void
+    {
+        $customMessage = 'Too many attempts to initiate';
+        $config = [
+            'rate_limits' => [
+                'initiate' => ['period_secs' => self::PERIOD_SECS_TO_INITIATE,
+                 'count' => self::MAX_ATTEMPTS_TO_INITIATE,
+                 'message' => fn() => $customMessage
+                ]
+            ]
+        ];
+
+        $manager = new Manager($this->storageMock, $this->senderMock, $config);
+
+        //exceeding all available initiations
+        for ($i = 0; $i < self::MAX_ATTEMPTS_TO_INITIATE; ++$i) {
+            $otp = $manager->start($phone);
+            $this->assertGreaterThan(0,$otp);
+        }
+
+        try {
+            $manager->start($phone);
+            $this->fail('RateLimit has not been not thrown');
+        } catch (RateLimit $e) {
+            $this->assertEquals(RateLimit::CODE_INITIATE, $e->getCode());
+            $this->assertEquals($customMessage, $e->getMessage());
+        }
+    }
+
+
 
     /**
      */
@@ -122,20 +163,17 @@ final class CustomConfigTest extends BaseTest
 
     /**
      * @dataProvider phoneNumbers
-     * @runInSeparateProcess
      */
     public function testOtpCustomMessage($phone): void
     {
         $message = "Just a test message";
 
-        //Message is just otp code and nothing more
         $manager = new Manager($this->storageMock, $this->senderMock,['otp' => ['message' => fn() => $message]]);
 
         $this->senderMock->expects($this->once())->method('invoke')->with($this->identicalTo($phone), $message);
 
         $otp = $manager->start($phone);
         $this->assertGreaterThan(0, $otp);
-
     }
 
 }

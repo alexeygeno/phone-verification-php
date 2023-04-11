@@ -20,19 +20,14 @@ class Redis implements I
         $this->config = array_replace(['prefix' => 'pvs:1', 'session_key'=>'session',  'session_counter_key'=>'session_counter'], $config);
     }
 
-    protected function key(string $key): string
+    protected function sessionKey(string $sessionId): string
     {
-        return $this->config['prefix'] . $key;
+        return "{$this->config['prefix']}:{$this->config['session_key']}:{$sessionId}";
     }
 
-    protected function sessionKey(string $id): string
+    protected function sessionCounterKey(string $sessionId): string
     {
-        return "{$this->config['prefix']}:{$this->config['session_key']}:{$id}";
-    }
-
-    protected function sessionCounterKey(string $id): string
-    {
-        return "{$this->config['prefix']}:{$this->config['session_counter_key']}:{$id}";
+        return "{$this->config['prefix']}:{$this->config['session_counter_key']}:{$sessionId}";
     }
 
     public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): I
