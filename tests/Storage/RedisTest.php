@@ -17,20 +17,28 @@ final class RedisTest extends BaseTest
 {
     use PHPMock;
 
+    protected Client $redisMock;
+
     protected function setUp(): void
     {
         /** @var Client $redisMock */
-        $redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
-        $redisMock->flushdb();
-//        $redisMock = new \Predis\Client('redis://redis:6379');
-//        $redisMock->flushall();
+        $this->redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
+        //functional
+        //$redisMock = new \Predis\Client('redis://redis:6379');
+        //$redisMock->flushdb();
 
-        $this->storage = new Redis($redisMock);
+        $this->storage = new Redis($this->redisMock);
     }
+
+    protected function tearDown():void{
+        $this->redisMock->flushdb();
+    }
+
 
     /**
      * @dataProvider phoneNumbers
      * @runInSeparateProcess
+     * @link https://github.com/php-mock/php-mock-phpunit#restrictions
      */
     public function testExpiration($phone): void
     {

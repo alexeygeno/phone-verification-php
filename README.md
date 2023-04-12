@@ -4,16 +4,16 @@ A php package to verify a user via phone
 In the process of development
 
 
-````php
+```php
 try{
     $manager->initiate('+380935258272');
 }catch(\Exception\RateLimit $e){
     $e->getMessage();
 }
-````
+```
 
 
-````php
+```php
 try{
     $manager->complete('+380935258272', 2345);
 }catch(\Exception\RateLimit $e){
@@ -21,13 +21,11 @@ try{
 }catch(\Exception\Otp $e){
     $e->getMessage();
 }
-````
+```
 
 ### TODO
 
-add testMaxAttemptsToInitiateExceeded  testMaxAttemptsToInitiateNotExceeded
 
-add transaction for mongo
 
 add createIndexes option for mongo
 
@@ -38,3 +36,5 @@ add demo and test with real senders and storages
 rename attempts to opt_check_count
 
 codesniffer settings strict type on first line see https://github.com/mongodb/mongo-php-library/blob/master/phpcs.xml.dist
+
+contribute to mongoMock package

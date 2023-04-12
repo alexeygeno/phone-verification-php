@@ -7,17 +7,17 @@ use MongoDB\Collection;
 
 class MongoDb implements I
 {
-    protected Client $mongoDb;
+    protected Client $client;
     protected array $config;
 
     /**
      * Redis Storage!
      *
-     * @param Client $mongoDb
+     * @param Client client
      */
-    public function __construct(Client $mongoDb, array $config = [])
+    public function __construct(Client $client, array $config = [])
     {
-        $this->mongoDb = $mongoDb;
+        $this->client = $client;
         $this->config = array_replace(['db' => 'phone_verification', 'collection_session' => 'session',
                                     'collection_session_counter'=>'session_counter'], $config);
     }
@@ -27,32 +27,46 @@ class MongoDb implements I
      */
     protected function collection($name): Collection
     {
-        return ($this->mongoDb->{$this->config['db']})->{$name};
+        return ($this->client->{$this->config['db']})->{$name};
     }
-
 
     public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): I
     {
 
-        //session upsert
-        $session = [
-            'otp' => $otp,
-            'created' =>  new \MongoDb\BSON\UTCDateTime(),
-            'attempts' => 0
-        ];
+        //TODO: make the transaction execution optional via config param
+        //throws MongoDB\Driver\Exception\BulkWriteException: Transaction numbers are only allowed on a replica set member or mongos
+        //$transaction = $this->client->startSession();
+        //$callback = function (\MongoDB\Driver\Session $session) use ($otp, $sessionId): void {
 
-        $this->collection($this->config['collection_session'])->updateOne(['id' => $sessionId], ['$setOnInsert'=> ['id' => $sessionId], '$set' => $session], ['upsert' => true]);
-        //indexes
-        $this->collection($this->config['collection_session'])->createIndex(['id' => 1], ['unique' => true]);
-        $this->collection($this->config['collection_session'])->createIndex(['created' => 1], ['expireAfterSeconds' => $sessionExpSecs]);
+            $sessionSet = [
+                'otp' => $otp,
+                //new datetime after every update
+                'updated' => new \MongoDb\BSON\UTCDateTime(),
+                'otp_check_count' => 0
+            ];
+
+            $this->collection($this->config['collection_session'])->updateOne(['id' => $sessionId], ['$set' => $sessionSet], ['upsert' => true/*, 'session'=> $session*/]);
+
+            $sessionCounterSetOnInsert = [
+                //new datetime on creation, no changes after update
+                'created' => new \MongoDb\BSON\UTCDateTime()
+            ];
+
+            $this->collection($this->config['collection_session_counter'])->updateOne(['id' => $sessionId], ['$setOnInsert' => $sessionCounterSetOnInsert], ['upsert' => true, /*'session'=> $session*/]);
+            $this->collection($this->config['collection_session_counter'])->updateOne(['id' => $sessionId], ['$inc' => ['count' => 1]], [/*'session'=> $session*/]);
+
+        //};
+
+        //\MongoDB\with_transaction($transaction, $callback);
 
 
-        $setOnInsert = ['id' => $sessionId,  'updated' =>  new \MongoDb\BSON\UTCDateTime()];
-
-        $this->collection($this->config['collection_session_counter'])->updateOne(['id' => $sessionId], ['$setOnInsert' => $setOnInsert, '$inc' => ['count' => 1]], ['upsert' => true]);
         //indexes
         $this->collection($this->config['collection_session_counter'])->createIndex(['id' => 1], ['unique' => true]);
-        $this->collection($this->config['collection_session_counter'])->createIndex(['updated' => 1], ['expireAfterSeconds' => $sessionCounterExpSecs]);
+        $this->collection($this->config['collection_session_counter'])->createIndex(['created' => 1], ['expireAfterSeconds' => $sessionCounterExpSecs]);
+        //indexes
+        $this->collection($this->config['collection_session'])->createIndex(['id' => 1], ['unique' => true]);
+        $this->collection($this->config['collection_session'])->createIndex(['updated' => 1], ['expireAfterSeconds' => $sessionExpSecs]);
+
 
         return $this;
     }
@@ -70,13 +84,13 @@ class MongoDb implements I
 
     public function otpCheckIncrement(string $sessionId): I
     {
-        $this->collection($this->config['collection_session'])->updateOne(['id' => $sessionId], ['$inc' => ['attempts' => 1]]);
+        $this->collection($this->config['collection_session'])->updateOne(['id' => $sessionId], ['$inc' => ['otp_check_count' => 1]]);
         return $this;
     }
     public function otpCheckCounter(string $sessionId): int
     {
-        $session = $this->collection($this->config['collection_session'])->findOne(['id' => $sessionId], ['projection' => ['attempts' => 1]]);
-        return  ($session and !empty($session->attempts)) ? $session->attempts :  0;
+        $session = $this->collection($this->config['collection_session'])->findOne(['id' => $sessionId], ['projection' => ['otp_check_count' => 1]]);
+        return  ($session and !empty($session->otp_check_count)) ? $session->otp_check_count :  0;
     }
 
     public function sessionCounter(string $sessionId): int{

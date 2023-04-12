@@ -23,7 +23,7 @@ final class DefaultConfigTest extends BaseTest
      */
     public function testCorrectOtp($phone): void
     {
-        $otp = $this->manager->start($phone);
+        $otp = $this->manager->initiate($phone);
         $this->assertIsInt($otp);
         $this->assertGreaterThan(0, $otp);
         $self = $this->manager->complete($phone, $otp);
@@ -35,7 +35,7 @@ final class DefaultConfigTest extends BaseTest
      */
     public function testIncorrectOtpException($phone): void
     {
-        $otp = $this->manager->start($phone);
+        $otp = $this->manager->initiate($phone);
         $this->assertGreaterThan(0, $otp);
         $incorrectOtp = $otp - 1;
         try {
@@ -51,7 +51,7 @@ final class DefaultConfigTest extends BaseTest
      */
     public function testNoSessionOtpException($phone): void
     {
-        $otp = $this->manager->start($phone);
+        $otp = $this->manager->initiate($phone);
         $this->assertIsInt($otp);
         $this->assertGreaterThan(0, $otp);
         $this->storageMock->sessionDown($phone);//emulate expiration

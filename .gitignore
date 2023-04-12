@@ -1,7 +1,9 @@
 /vendor
 /docker
+/demo.php
 docker-compose.yml
 composer.lock
 .phpunit.result.cache
 .idea
+.ENV
 /phpunit.xml.dist.bak

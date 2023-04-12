@@ -63,7 +63,7 @@ class Manager
      * @return int
      * @throws Exception\RateLimit
      */
-    public function start($phone): int
+    public function initiate($phone): int
     {
         $otp = rand($this->otpMin, $this->otpMax);
         $message = $this->config['otp']['message']($otp);

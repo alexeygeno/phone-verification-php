@@ -47,7 +47,7 @@ final class CustomConfigTest extends BaseTest
             ]
         ];
         $manager = new Manager($this->storageMock, $this->senderMock, $config);
-        $otp = $manager->start($phone);
+        $otp = $manager->initiate($phone);
         $this->assertGreaterThan(0, $otp);
 
         //Max attempts+1 with wrong otp
@@ -83,7 +83,7 @@ final class CustomConfigTest extends BaseTest
             ]
         ];
         $manager = new Manager($this->storageMock, $this->senderMock, $config);
-        $otp = $manager->start($phone);
+        $otp = $manager->initiate($phone);
         $this->assertGreaterThan(0, $otp);
 
         //Max attempts with wrong otp
@@ -124,12 +124,12 @@ final class CustomConfigTest extends BaseTest
 
         //exceeding all available initiations
         for ($i = 0; $i < self::MAX_ATTEMPTS_TO_INITIATE; ++$i) {
-            $otp = $manager->start($phone);
+            $otp = $manager->initiate($phone);
             $this->assertGreaterThan(0,$otp);
         }
 
         try {
-            $manager->start($phone);
+            $manager->initiate($phone);
             $this->fail('RateLimit has not been not thrown');
         } catch (RateLimit $e) {
             $this->assertEquals(RateLimit::CODE_INITIATE, $e->getCode());
@@ -150,6 +150,7 @@ final class CustomConfigTest extends BaseTest
     /**
      * @dataProvider otpLengths
      * @runInSeparateProcess
+     * @link https://github.com/php-mock/php-mock-phpunit#restrictions
      */
     public function testOtpCustomLength($phone, $otpLength, $min, $max, $any): void
     {
@@ -158,7 +159,7 @@ final class CustomConfigTest extends BaseTest
         $rand = $this->getFunctionMock('AlexGeno\PhoneVerification', "rand");
         $rand->expects($this->once())->with($min, $max)->willReturn($any);
 
-        $this->assertEquals($any, $manager->start($phone));
+        $this->assertEquals($any, $manager->initiate($phone));
     }
 
     /**
@@ -172,7 +173,7 @@ final class CustomConfigTest extends BaseTest
 
         $this->senderMock->expects($this->once())->method('invoke')->with($this->identicalTo($phone), $message);
 
-        $otp = $manager->start($phone);
+        $otp = $manager->initiate($phone);
         $this->assertGreaterThan(0, $otp);
     }
 

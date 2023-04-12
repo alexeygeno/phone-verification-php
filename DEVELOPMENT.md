@@ -1,30 +1,43 @@
 #Docker
+####Start up
+```shell
+$ echo 'PHP_VERSION=7' > .ENV 
+```
+```shell
+$ docker-compose up --build --force-recreate
+```
+####Tear down
 
-````
-docker-compose up --build  --force-recreate
-````
-
-````
+```shell
 docker-compose down
-````
+```
+####Switching between php 7/8 versions
 
+1. Cleanup 
+```shell
+$ rm -f composer.lock && rm -fr vendor/ 
+```
+2. Create .EVV file (if necessary)  and put the php version there
+```text
+PHP_VERSION=8
+```
 
 #Unit Tests
-Run a single Method
-````
-vendor/bin/phpunit --filter 'AlexGeno\\PhoneVerificationTests\\Manager\\ManagerTest::testMaxAttemptsNotExceeded'  --debug
-````
-Check code coverage
-````
-vendor/bin/phpunit --coverage-text
-````
+####Run a single Method
+```shell
+$ vendor/bin/phpunit --filter 'AlexGeno\\PhoneVerificationTests\\Manager\\ManagerTest::testMaxAttemptsNotExceeded'  --debug
+```
+####Check code coverage
+```shell
+$ vendor/bin/phpunit --coverage-text
+```
 #Code Sniffer
-Check
-````
-vendor/bin/phpcs --standard=PSR12 src
-````
+####Check
+```shell
+$ vendor/bin/phpcs --standard=PSR12 src
+```
 
-Fix
-````
-vendor/bin/phpcbf --standard=PSR12 src
-````
+####Fix
+```shell
+$ vendor/bin/phpcbf --standard=PSR12 src
+```

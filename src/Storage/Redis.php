@@ -6,7 +6,7 @@ use Predis\Client;
 
 class Redis implements I
 {
-    protected Client $redis;
+    protected Client $client;
     protected array $config;
 
     /**
@@ -14,9 +14,9 @@ class Redis implements I
      * @param Client $redis
      * @param array $config
      */
-    public function __construct(Client $redis, array $config = [])
+    public function __construct(Client $client, array $config = [])
     {
-        $this->redis = $redis;
+        $this->client = $client;
         $this->config = array_replace(['prefix' => 'pvs:1', 'session_key'=>'session',  'session_counter_key'=>'session_counter'], $config);
     }
 
@@ -32,42 +32,42 @@ class Redis implements I
 
     public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): I
     {
-        $this->redis->multi();
+        $this->client->multi();
 
         //session
-        $this->redis->hmset($this->sessionKey($sessionId), ['otp' => $otp, 'attempts' => 0 ]);
-        $this->redis->expire($this->sessionKey($sessionId), $sessionExpSecs, 'GT');
+        $this->client->hmset($this->sessionKey($sessionId), ['otp' => $otp, 'otp_check_count' => 0 ]);
+        $this->client->expire($this->sessionKey($sessionId), $sessionExpSecs, 'GT');
 
         //session counter
-        $this->redis->incr($this->sessionCounterKey($sessionId));
-        $this->redis->expire($this->sessionCounterKey($sessionId), $sessionCounterExpSecs, 'NX');
+        $this->client->incr($this->sessionCounterKey($sessionId));
+        $this->client->expire($this->sessionCounterKey($sessionId), $sessionCounterExpSecs, 'NX');
 
-        $this->redis->exec();
+        $this->client->exec();
         return $this;
     }
     public function sessionDown(string $sessionId): I
     {
-        $this->redis->del($this->sessionKey($sessionId));
+        $this->client->del($this->sessionKey($sessionId));
         return $this;
     }
 
     public function otp(string $sessionId): int
     {
-        $otp = $this->redis->hget($this->sessionKey($sessionId), 'otp');
+        $otp = $this->client->hget($this->sessionKey($sessionId), 'otp');
         return  $otp ?? 0;
     }
 
     public function otpCheckIncrement(string $sessionId): I
     {
-        $this->redis->hincrby($this->sessionKey($sessionId), 'attempts', 1);
+        $this->client->hincrby($this->sessionKey($sessionId), 'otp_check_count', 1);
         return $this;
     }
     public function otpCheckCounter(string $sessionId): int
     {
-        return (int)$this->redis->hget($this->sessionKey($sessionId), 'attempts');
+        return (int)$this->client->hget($this->sessionKey($sessionId), 'otp_check_count');
     }
     public function sessionCounter(string $sessionId): int
     {
-        return (int)$this->redis->get($this->sessionCounterKey($sessionId));
+        return (int)$this->client->get($this->sessionCounterKey($sessionId));
     }
 }
