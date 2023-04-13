@@ -17,7 +17,7 @@ class Redis implements I
     public function __construct(Client $client, array $config = [])
     {
         $this->client = $client;
-        $this->config = array_replace(['prefix' => 'pvs:1', 'session_key'=>'session',  'session_counter_key'=>'session_counter'], $config);
+        $this->config = array_replace(['prefix' => 'pv:1', 'session_key'=>'session',  'session_counter_key'=>'session_counter'], $config);
     }
 
     protected function sessionKey(string $sessionId): string
@@ -32,8 +32,6 @@ class Redis implements I
 
     public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): I
     {
-        $this->client->multi();
-
         //session
         $this->client->hmset($this->sessionKey($sessionId), ['otp' => $otp, 'otp_check_count' => 0 ]);
         $this->client->expire($this->sessionKey($sessionId), $sessionExpSecs, 'GT');
@@ -42,7 +40,19 @@ class Redis implements I
         $this->client->incr($this->sessionCounterKey($sessionId));
         $this->client->expire($this->sessionCounterKey($sessionId), $sessionCounterExpSecs, 'NX');
 
-        $this->client->exec();
+        /*
+         * TODO: make the transaction execution optional via config param $sessionUpAtomicity
+        $this->client->transaction(function($transaction) use ($sessionId, $otp, $sessionExpSecs, $sessionCounterExpSecs){
+            //session
+            $transaction->hmset($this->sessionKey($sessionId), ['otp' => $otp, 'otp_check_count' => 0]);
+            $transaction->expire($this->sessionKey($sessionId), $sessionExpSecs, 'GT');
+
+            //session counter
+            $transaction->incr($this->sessionCounterKey($sessionId));
+            $transaction->expire($this->sessionCounterKey($sessionId), $sessionCounterExpSecs, 'NX');
+        });
+         */
+
         return $this;
     }
     public function sessionDown(string $sessionId): I

@@ -18,8 +18,10 @@ class MongoDb implements I
     public function __construct(Client $client, array $config = [])
     {
         $this->client = $client;
-        $this->config = array_replace(['db' => 'phone_verification', 'collection_session' => 'session',
-                                    'collection_session_counter'=>'session_counter'], $config);
+        $this->config = array_replace(['db' => 'phone_verification',
+                                       'collection_session' => 'session',
+                                       'collection_session_counter' => 'session_counter',
+                                       'indexes' => true], $config);
     }
 
     /**
@@ -33,7 +35,7 @@ class MongoDb implements I
     public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): I
     {
 
-        //TODO: make the transaction execution optional via config param
+        //TODO: make the transaction execution optional via config param $sessionUpAtomicity
         //throws MongoDB\Driver\Exception\BulkWriteException: Transaction numbers are only allowed on a replica set member or mongos
         //$transaction = $this->client->startSession();
         //$callback = function (\MongoDB\Driver\Session $session) use ($otp, $sessionId): void {
@@ -42,6 +44,7 @@ class MongoDb implements I
                 'otp' => $otp,
                 //new datetime after every update
                 'updated' => new \MongoDb\BSON\UTCDateTime(),
+                //reset otp_check_count every update
                 'otp_check_count' => 0
             ];
 
@@ -56,20 +59,30 @@ class MongoDb implements I
             $this->collection($this->config['collection_session_counter'])->updateOne(['id' => $sessionId], ['$inc' => ['count' => 1]], [/*'session'=> $session*/]);
 
         //};
-
+        //@link https://www.mongodb.com/docs/upcoming/core/transactions/
         //\MongoDB\with_transaction($transaction, $callback);
 
 
         //indexes
-        $this->collection($this->config['collection_session_counter'])->createIndex(['id' => 1], ['unique' => true]);
-        $this->collection($this->config['collection_session_counter'])->createIndex(['created' => 1], ['expireAfterSeconds' => $sessionCounterExpSecs]);
-        //indexes
-        $this->collection($this->config['collection_session'])->createIndex(['id' => 1], ['unique' => true]);
-        $this->collection($this->config['collection_session'])->createIndex(['updated' => 1], ['expireAfterSeconds' => $sessionExpSecs]);
-
+        if($this->config['indexes']){
+            $this->createIndexes( $sessionExpSecs,  $sessionCounterExpSecs);
+        }
 
         return $this;
     }
+
+    /**
+     * @param int $sessionExpSecs
+     * @param int $sessionCounterExpSecs
+     */
+    protected function createIndexes(int $sessionExpSecs, int $sessionCounterExpSecs){
+        $this->collection($this->config['collection_session'])->createIndex(['id' => 1], ['unique' => true]);
+        $this->collection($this->config['collection_session'])->createIndex(['updated' => 1], ['expireAfterSeconds' => $sessionExpSecs]);
+
+        $this->collection($this->config['collection_session_counter'])->createIndex(['id' => 1], ['unique' => true]);
+        $this->collection($this->config['collection_session_counter'])->createIndex(['created' => 1], ['expireAfterSeconds' => $sessionCounterExpSecs]);
+    }
+
     public function sessionDown(string $sessionId): I
     {
         $this->collection($this->config['collection_session'])->deleteOne(['id' => $sessionId]);

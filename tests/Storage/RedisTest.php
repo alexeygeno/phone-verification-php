@@ -21,11 +21,9 @@ final class RedisTest extends BaseTest
 
     protected function setUp(): void
     {
-        /** @var Client $redisMock */
         $this->redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
         //functional
-        //$redisMock = new \Predis\Client('redis://redis:6379');
-        //$redisMock->flushdb();
+        //$this->redisMock = new \Predis\Client('redis://redis:6379');
 
         $this->storage = new Redis($this->redisMock);
     }

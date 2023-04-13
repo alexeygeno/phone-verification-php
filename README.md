@@ -1,8 +1,16 @@
-# phone-verification-php
-A php package to verify a user via phone
+## Widely configurable and extendable phone verification
+ - ###Requirements
+ - ###Installation
+ - ###Usage
+ - ###Configuration
+ - ###Extending
+ - ###Demo
+ - ###Contribution
 
-In the process of development
 
+
+
+Reqirements
 
 ```php
 try{
@@ -27,14 +35,13 @@ try{
 
 
 
-add createIndexes option for mongo
 
 try catch for transaction in redis, check discard
 
 add demo and test with real senders and storages
 
-rename attempts to opt_check_count
-
 codesniffer settings strict type on first line see https://github.com/mongodb/mongo-php-library/blob/master/phpcs.xml.dist
 
-contribute to mongoMock package
+phpDoc
+
+add Manager::sender()
