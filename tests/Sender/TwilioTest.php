@@ -12,7 +12,7 @@ final class TwilioTest extends TestCase
     {
         return [
              ['+380935258272', '+442077206312', 'Your code is 23234'], //from, to, text
-             ['380935258272', '+15417543010', 'Your code is 56895']
+             ['380935258272', '5417543010', 'Your code is 56895']
         ];
     }
 

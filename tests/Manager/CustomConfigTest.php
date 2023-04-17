@@ -26,11 +26,11 @@ final class CustomConfigTest extends BaseTest
     public function otpLengths(): array
     {
         return [
-            '2_digits_code' => ['+380935258272', 2, 10, 99, 33], //phone, code length, code min, code max, code any
-            '3_digits_code' => ['+380935258272',3, 100, 999, 444],
-            '4_digits_code' => ['+380935258272',4, 1000, 9999, 5555],
-            '5_digits_code' => ['+380935258272',5, 10000, 99999, 55555],
-            '5_digits_code' => ['+380935258272',6, 100000, 999999, 666666],
+            '2_digits_otp' => ['+380935258272', 2, 10, 99, 33], //phone, otp length, otp min, otp max, otp any
+            '3_digits_otp' => ['+380935258272',3, 100, 999, 444],
+            '4_digits_otp' => ['+380935258272',4, 1000, 9999, 5555],
+            '5_digits_otp' => ['+380935258272',5, 10000, 99999, 55555],
+            '6_digits_otp' => ['+380935258272',6, 100000, 999999, 666666],
         ];
     }
 
@@ -46,8 +46,9 @@ final class CustomConfigTest extends BaseTest
                 'complete' => ['period_secs' => self::PERIOD_SECS_TO_COMPLETE, 'count' => self::MAX_ATTEMPTS_TO_COMPLETE]
             ]
         ];
-        $manager = new Manager($this->storageMock, $this->senderMock, $config);
-        $otp = $manager->initiate($phone);
+        $manager = new Manager($this->storageMock, $config);
+        $manager->sender($this->senderMock)->initiate($phone);
+        $otp = $manager->otp();
         $this->assertGreaterThan(0, $otp);
 
         //Max attempts+1 with wrong otp
@@ -82,10 +83,11 @@ final class CustomConfigTest extends BaseTest
                 'complete' => ['period_secs' => self::PERIOD_SECS_TO_COMPLETE, 'count' => self::MAX_ATTEMPTS_TO_COMPLETE]  //you can complete confirmation 6 times per 6 minutes
             ]
         ];
-        $manager = new Manager($this->storageMock, $this->senderMock, $config);
-        $otp = $manager->initiate($phone);
-        $this->assertGreaterThan(0, $otp);
+        $manager = new Manager($this->storageMock, $config);
 
+        $manager->sender($this->senderMock)->initiate($phone);
+        $otp = $manager->otp();
+        $this->assertGreaterThan(0, $otp);
         //Max attempts with wrong otp
         for ($i = 0; $i < self::MAX_ATTEMPTS_TO_COMPLETE; ++$i) {
             //impossible to use expectException because it immediately takes it out of a test method
@@ -120,12 +122,14 @@ final class CustomConfigTest extends BaseTest
             ]
         ];
 
-        $manager = new Manager($this->storageMock, $this->senderMock, $config);
+        $manager = (new Manager($this->storageMock, $config))->sender($this->senderMock);
 
         //exceeding all available initiations
         for ($i = 0; $i < self::MAX_ATTEMPTS_TO_INITIATE; ++$i) {
-            $otp = $manager->initiate($phone);
-            $this->assertGreaterThan(0,$otp);
+            $manager->initiate($phone);
+            $otp = $manager->otp();
+            $this->assertGreaterThan(0, $otp);
+            $this->assertGreaterThan(0, $otp);
         }
 
         try {
@@ -140,11 +144,12 @@ final class CustomConfigTest extends BaseTest
 
 
     /**
+     * @dataProvider phoneNumbers
      */
-    public function testOtpIncorrectConfig(): void
+    public function testOtpIncorrectConfig($phone): void
     {
-        $this->expectException(\AlexGeno\PhoneVerification\Exception::class);
-        new Manager($this->storageMock, $this->senderMock, ['otp' => ['message' => '']]);
+        $this->expectException(\Error::class);
+        (new Manager($this->storageMock, ['otp' => ['message' => '']]))->sender($this->senderMock)->initiate($phone);
     }
 
     /**
@@ -154,12 +159,13 @@ final class CustomConfigTest extends BaseTest
      */
     public function testOtpCustomLength($phone, $otpLength, $min, $max, $any): void
     {
-        $manager = new Manager($this->storageMock, $this->senderMock, ['otp' => ['length' => $otpLength]]);
+        $manager = new Manager($this->storageMock, ['otp' => ['length' => $otpLength]]);
 
         $rand = $this->getFunctionMock('AlexGeno\PhoneVerification', "rand");
         $rand->expects($this->once())->with($min, $max)->willReturn($any);
 
-        $this->assertEquals($any, $manager->initiate($phone));
+        $manager->sender($this->senderMock)->initiate($phone);
+        $this->assertEquals($any, $manager->otp());
     }
 
     /**
@@ -168,13 +174,15 @@ final class CustomConfigTest extends BaseTest
     public function testOtpCustomMessage($phone): void
     {
         $message = "Just a test message";
+        $manager = new Manager($this->storageMock, ['otp' => ['message' => fn() => $message]]);
 
-        $manager = new Manager($this->storageMock, $this->senderMock,['otp' => ['message' => fn() => $message]]);
+        $responseMock = ['ok' => true];
+        $this->senderMock->expects($this->once())
+            ->method('invoke')
+            ->with($this->identicalTo($phone), $message)->willReturn($responseMock);
 
-        $this->senderMock->expects($this->once())->method('invoke')->with($this->identicalTo($phone), $message);
-
-        $otp = $manager->initiate($phone);
-        $this->assertGreaterThan(0, $otp);
+        $response = $manager->sender($this->senderMock)->initiate($phone);
+        $this->assertEquals($responseMock, $response);
     }
 
 }

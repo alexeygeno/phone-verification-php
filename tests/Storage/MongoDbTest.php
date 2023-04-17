@@ -27,7 +27,7 @@ final class MongoDbTest extends BaseTest
         //functional
         //$this->mongoDbMock = new \MongoDB\Client('mongodb://mongodb:27017/');
 //
-        $this->storage = new MongoDb($this->mongoDbMock, ['db' => 'phone_verification']);
+        $this->storage = new MongoDb($this->mongoDbMock, ['indexes' => 'true', 'db' => 'phone_verification']);
     }
 
     protected function tearDown(): void

@@ -13,7 +13,7 @@ final class VonageTest extends TestCase
     {
         return [
              ['MySuperBrand', '+442077206312', 'Your code is 323323'], //from, to, text
-             ['MyGreatBrand', '+15417543010', 'Your code is 343434']
+             ['MyGreatBrand', '5417543010', 'Your code is 343434']
         ];
     }
 

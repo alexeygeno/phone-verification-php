@@ -33,9 +33,8 @@ abstract class BaseTest extends TestCase
     public function phoneNumbers(): array
     {
         return [
-            'UKR' => ['+380935258272'],
-            'US'  => ['5417543010'],
-            'UK'  => ['+442077206312']
+            'long' => ['+380935258272'],
+            'short'  => ['5417543010'],
         ];
     }
 }

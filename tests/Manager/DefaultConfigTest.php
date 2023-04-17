@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AlexGeno\PhoneVerificationTests\Manager;
 
+use AlexGeno\PhoneVerification\Exception;
 use AlexGeno\PhoneVerification\Exception\Otp;
 use AlexGeno\PhoneVerification\Manager;
 
@@ -15,7 +16,7 @@ final class DefaultConfigTest extends BaseTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->manager = new Manager($this->storageMock, $this->senderMock);
+        $this->manager = new Manager($this->storageMock);
     }
 
     /**
@@ -23,7 +24,8 @@ final class DefaultConfigTest extends BaseTest
      */
     public function testCorrectOtp($phone): void
     {
-        $otp = $this->manager->initiate($phone);
+        $this->manager->sender($this->senderMock)->initiate($phone);
+        $otp = $this->manager->otp();
         $this->assertIsInt($otp);
         $this->assertGreaterThan(0, $otp);
         $self = $this->manager->complete($phone, $otp);
@@ -35,7 +37,9 @@ final class DefaultConfigTest extends BaseTest
      */
     public function testIncorrectOtpException($phone): void
     {
-        $otp = $this->manager->initiate($phone);
+        $this->manager->sender($this->senderMock)->initiate($phone);
+        $otp = $this->manager->otp();
+
         $this->assertGreaterThan(0, $otp);
         $incorrectOtp = $otp - 1;
         try {
@@ -49,9 +53,11 @@ final class DefaultConfigTest extends BaseTest
     /**
      * @dataProvider phoneNumbers
      */
-    public function testNoSessionOtpException($phone): void
+    public function testExpiredOtpException($phone): void
     {
-        $otp = $this->manager->initiate($phone);
+        $this->manager->sender($this->senderMock)->initiate($phone);
+        $otp = $this->manager->otp();
+
         $this->assertIsInt($otp);
         $this->assertGreaterThan(0, $otp);
         $this->storageMock->sessionDown($phone);//emulate expiration
@@ -62,5 +68,14 @@ final class DefaultConfigTest extends BaseTest
         } catch (Otp $e) {
             $this->assertEquals(Otp::CODE_EXPIRED, $e->getCode());
         }
+    }
+
+    /**
+     * @dataProvider phoneNumbers
+     */
+    public function testInitiationWhenNoSender($phone): void
+    {
+        $this->expectException(Exception::class);
+        $this->manager->initiate($phone);
     }
 }

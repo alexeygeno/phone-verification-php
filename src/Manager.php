@@ -11,6 +11,7 @@ class Manager
     protected array $config;
     protected \AlexGeno\PhoneVerification\Storage\I $storage;
     protected \AlexGeno\PhoneVerification\Sender\I $sender;
+    protected int $otp;
     protected int $otpMin;
     protected int $otpMax;
 
@@ -21,14 +22,14 @@ class Manager
      * @param array $config
      * @throws Exception
      */
-    public function __construct(\AlexGeno\PhoneVerification\Storage\I $storage, \AlexGeno\PhoneVerification\Sender\I $sender, array $config = [])
+    public function __construct(\AlexGeno\PhoneVerification\Storage\I $storage, array $config = [])
     {
         $this->config = array_replace_recursive([
             'otp' => [
                 'length' => 4,
                 'message' =>  (fn($otp) => sprintf('Your code is %d', $otp)),
                 'message_incorrect' =>  fn($otp) => 'Code is incorrect',
-                'message_expired' =>  fn($otp) => 'Code is expired',
+                'message_expired' =>  fn($periodSecs, $otp) => sprintf('Code is expired. It is valid for %d minutes', $periodSecs/60)
             ],
             'rate_limits' => [
                 'initiate' => [
@@ -46,35 +47,46 @@ class Manager
             ]
         ], $config);
 
-        if(!($this->config['otp']['message'] instanceof \Closure)){
-            throw new \AlexGeno\PhoneVerification\Exception('Check the config item "otp.message". It must be an anonymous func.');
-        }
-
         $this->storage = $storage;
-        $this->sender = $sender;
 
         $otpLength = (int)$this->config['otp']['length'];
         $this->otpMin = pow(10, $otpLength - 1);
         $this->otpMax = pow(10, $otpLength) - 1;
     }
 
+    public function sender(\AlexGeno\PhoneVerification\Sender\I $sender):Manager{
+        $this->sender = $sender;
+        return $this;
+    }
+
+    /**
+     * Returns generated otp
+     * @return int
+     */
+    public function otp():int{
+        return $this->otp;
+    }
+
     /**
      * @param $phone
-     * @return int
+     * @return mixed
      * @throws Exception\RateLimit
+     * @throws Exception
      */
-    public function initiate($phone): int
+    public function initiate($phone)
     {
-        $otp = rand($this->otpMin, $this->otpMax);
-        $message = $this->config['otp']['message']($otp);
+        if(!isset($this->sender)){
+            throw new Exception('Sender is required to call Manager::initiate. Try to call Manager::sender before.');
+        }
+        $this->otp = rand($this->otpMin, $this->otpMax);
+        $message = $this->config['otp']['message']($this->otp);
 
         $rateLimit = $this->config['rate_limits']['initiate'];
         if ($this->storage->sessionCounter($phone) >= (int)$rateLimit['count']) {
             throw new RateLimit($rateLimit['message']($phone, $rateLimit['period_secs'], $rateLimit['count']),RateLimit::CODE_INITIATE);
         }
-        $this->storage->sessionUp($phone, $otp, $this->config['rate_limits']['complete']['period_secs'], $rateLimit['period_secs']);
-        $this->sender->invoke($phone, $message);
-        return $otp;
+        $this->storage->sessionUp($phone, $this->otp, $this->config['rate_limits']['complete']['period_secs'], $rateLimit['period_secs']);
+        return $this->sender->invoke($phone, $message);
     }
 
     /**
@@ -91,11 +103,11 @@ class Manager
 
         $storedOtp = $this->storage->otp($phone);
 
-
+        //expired otp
         if ($storedOtp === 0) {
-            throw new Otp($this->config['otp']['message_expired']($otp), Otp::CODE_EXPIRED);
+            throw new Otp($this->config['otp']['message_expired']($rateLimit['period_secs'], $otp), Otp::CODE_EXPIRED);
         }
-
+        //incorrect otp
         if ($storedOtp !== $otp) {
             $this->storage->otpCheckIncrement($phone);
             throw new Otp($this->config['otp']['message_incorrect']($otp), Otp::CODE_INCORRECT);

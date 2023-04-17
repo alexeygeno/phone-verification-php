@@ -21,7 +21,7 @@ class MongoDb implements I
         $this->config = array_replace(['db' => 'phone_verification',
                                        'collection_session' => 'session',
                                        'collection_session_counter' => 'session_counter',
-                                       'indexes' => true], $config);
+                                       'indexes' => false], $config);
     }
 
     /**
