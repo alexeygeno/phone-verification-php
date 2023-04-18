@@ -21,11 +21,11 @@ final class MessageBirdTest extends TestCase
      */
     public function testInvoke($from, $to, $text)
     {
-        $clientMock = $this->getMockBuilder('\MessageBird\Client')->disableOriginalConstructor()->getMock();
+        $clientMock = $this->getMockBuilder(\MessageBird\Client::class)->disableOriginalConstructor()->getMock();
 
-        $messagesMock = $this->createMock('\MessageBird\Resources\Messages');
+        $messagesMock = $this->createMock(\MessageBird\Resources\Messages::class);
 
-        $messageMock = $this->createMock('\MessageBird\Objects\Message');
+        $messageMock = $this->createMock(\MessageBird\Objects\Message::class);
         $messageMock->originator = $from;
         $messageMock->recipients = [$to];
         $messageMock->body = $text;

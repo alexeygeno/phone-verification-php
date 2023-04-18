@@ -35,7 +35,7 @@ class MongoDb implements I
     public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): I
     {
 
-        //TODO: make the transaction execution optional via config param $sessionUpAtomicity
+        //TODO: make the transaction execution optional via config param $atomicity
         //throws MongoDB\Driver\Exception\BulkWriteException: Transaction numbers are only allowed on a replica set member or mongos
         //$transaction = $this->client->startSession();
         //$callback = function (\MongoDB\Driver\Session $session) use ($otp, $sessionId): void {

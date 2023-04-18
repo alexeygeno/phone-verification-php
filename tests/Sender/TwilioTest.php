@@ -21,9 +21,9 @@ final class TwilioTest extends TestCase
      */
     public function testInvoke($from, $to, $text)
     {
-        $clientMock = $this->getMockBuilder('\Twilio\Rest\Client')->disableOriginalConstructor()->getMock();
+        $clientMock = $this->getMockBuilder(\Twilio\Rest\Client::class)->disableOriginalConstructor()->getMock();
 
-        $messageListMock = $this->createMock('\Twilio\Rest\Api\V2010\Account\MessageList');
+        $messageListMock = $this->createMock(\Twilio\Rest\Api\V2010\Account\MessageList::class);
 
         $messageListMock->expects($this->once())->method('create')->with($to, ['from' => $from,'body' => $text]);
 

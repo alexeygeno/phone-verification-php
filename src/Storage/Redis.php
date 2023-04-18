@@ -34,18 +34,18 @@ class Redis implements I
     {
         //session
         $this->client->hmset($this->sessionKey($sessionId), ['otp' => $otp, 'otp_check_count' => 0 ]);
-        $this->client->expire($this->sessionKey($sessionId), $sessionExpSecs, 'GT');
+        $this->client->expire($this->sessionKey($sessionId), $sessionExpSecs);
 
         //session counter
         $this->client->incr($this->sessionCounterKey($sessionId));
         $this->client->expire($this->sessionCounterKey($sessionId), $sessionCounterExpSecs, 'NX');
 
         /*
-         * TODO: make the transaction execution optional via config param $sessionUpAtomicity
+         * TODO: make the transaction execution optional via config param $atomicity
         $this->client->transaction(function($transaction) use ($sessionId, $otp, $sessionExpSecs, $sessionCounterExpSecs){
             //session
             $transaction->hmset($this->sessionKey($sessionId), ['otp' => $otp, 'otp_check_count' => 0]);
-            $transaction->expire($this->sessionKey($sessionId), $sessionExpSecs, 'GT');
+            $transaction->expire($this->sessionKey($sessionId), $sessionExpSecs);
 
             //session counter
             $transaction->incr($this->sessionCounterKey($sessionId));

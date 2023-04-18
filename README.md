@@ -74,7 +74,7 @@ $config = [
       'initiate' => [
           'period_secs' => 86400, 'count' => 10,
           'message' => fn($phone, $periodSecs, $count) => 
-                          sprintf('You can send only %d sms per %d hours.', $count, $periodSecs/60/60)
+                          sprintf('You can send only %d sms in %d hours.', $count, $periodSecs/60/60)
       ]
   ],
   'otp' => [
@@ -108,8 +108,8 @@ $config = [
       'complete' => [
          'period_secs' => 300, 'count' => 5,
          'message' => fn($phone, $periodSecs, $count) => 
-                         sprintf( 'You are trying to use an incorrect code more than'. 
-                            ' %d times per %d minutes', $count, $periodSecs/60)
+                         sprintf( 'You are trying to use an incorrect code'. 
+                            ' %d times in %d minutes', $count, $periodSecs/60)
      ]
   ],
   'otp' => [

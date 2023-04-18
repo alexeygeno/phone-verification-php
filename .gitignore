@@ -1,9 +1,10 @@
 /vendor
 /docker
-/demo.php
+/example
 docker-compose.yml
 composer.lock
 .phpunit.result.cache
 .idea
-.ENV
-/phpunit.xml.dist.bak
+example/.env
+phpunit.xml
+phpcs.xml

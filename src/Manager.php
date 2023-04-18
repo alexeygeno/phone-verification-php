@@ -29,19 +29,19 @@ class Manager
                 'length' => 4,
                 'message' =>  (fn($otp) => sprintf('Your code is %d', $otp)),
                 'message_incorrect' =>  fn($otp) => 'Code is incorrect',
-                'message_expired' =>  fn($periodSecs, $otp) => sprintf('Code is expired. It is valid for %d minutes', $periodSecs/60)
+                'message_expired' =>  fn($periodSecs, $otp) => sprintf('Code is expired. It is valid for %d minutes.', $periodSecs/60)
             ],
             'rate_limits' => [
                 'initiate' => [
                     //you can initiate confirmation 10 times per 24 hours
                     'period_secs' => 86400, 'count' => 10,
-                    'message' => (fn($phone, $periodSecs, $count) => (sprintf('You can send only %d sms per %d hours.',
+                    'message' => (fn($phone, $periodSecs, $count) => (sprintf('You can send only %d sms in %d hours.',
                                         $count, $periodSecs/60/60)))
                 ],
                 'complete' => [
                     //you can complete confirmation 5 times per 5 minutes
                     'period_secs' => 300, 'count' => 5,
-                    'message' => (fn($phone, $periodSecs, $count) => (sprintf('You have been using an incorrect code more than %d times per %d minutes',
+                    'message' => (fn($phone, $periodSecs, $count) => (sprintf('You have been using an incorrect code %d times in %d minutes.',
                         $count, $periodSecs/60)))
                     ]
             ]
@@ -81,11 +81,11 @@ class Manager
         $this->otp = rand($this->otpMin, $this->otpMax);
         $message = $this->config['otp']['message']($this->otp);
 
-        $rateLimit = $this->config['rate_limits']['initiate'];
-        if ($this->storage->sessionCounter($phone) >= (int)$rateLimit['count']) {
-            throw new RateLimit($rateLimit['message']($phone, $rateLimit['period_secs'], $rateLimit['count']),RateLimit::CODE_INITIATE);
+        $rateLimitInitiate = $this->config['rate_limits']['initiate'];
+        if ($this->storage->sessionCounter($phone) >= (int)$rateLimitInitiate['count']) {
+            throw new RateLimit($rateLimitInitiate['message']($phone, $rateLimitInitiate['period_secs'], $rateLimitInitiate['count']),RateLimit::CODE_INITIATE);
         }
-        $this->storage->sessionUp($phone, $this->otp, $this->config['rate_limits']['complete']['period_secs'], $rateLimit['period_secs']);
+        $this->storage->sessionUp($phone, $this->otp, $this->config['rate_limits']['complete']['period_secs'], $rateLimitInitiate['period_secs']);
         return $this->sender->invoke($phone, $message);
     }
 
@@ -97,7 +97,7 @@ class Manager
     {
         $rateLimit = $this->config['rate_limits']['complete'];
 
-        if ($this->storage->otpCheckCounter($phone) > (int)$rateLimit['count']) {
+        if ($this->storage->otpCheckCounter($phone) >= (int)$rateLimit['count']) {
             throw new RateLimit($rateLimit['message']($phone, $rateLimit['period_secs'], $rateLimit['count']), RateLimit::CODE_COMPLETE);
         }
 

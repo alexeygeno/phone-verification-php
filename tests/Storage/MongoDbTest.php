@@ -19,7 +19,7 @@ final class MongoDbTest extends BaseTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mongoDbMock = $this->createMock('\MongoDB\Client');
+        $this->mongoDbMock = $this->createMock(\MongoDB\Client::class);
         $this->mongoDbMock->expects($this->atLeastOnce())
                     ->method('__get')
                     ->willReturn( new MockDatabase('phone_verification'));

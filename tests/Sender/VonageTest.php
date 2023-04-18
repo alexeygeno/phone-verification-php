@@ -22,9 +22,9 @@ final class VonageTest extends TestCase
      */
     public function testInvoke($from, $to, $text)
     {
-        $clientMock = $this->getMockBuilder('\Vonage\Client')->disableOriginalConstructor()->getMock();
+        $clientMock = $this->getMockBuilder(\Vonage\Client::class)->disableOriginalConstructor()->getMock();
 
-        $smsClientMock = $this->createMock('\Vonage\SMS\Client');
+        $smsClientMock = $this->createMock(\Vonage\SMS\Client::class);
 
         $smsClientMock->expects($this->once())->method('send')->with(new \Vonage\SMS\Message\SMS($to, $from, $text, 'unicode'));
 

@@ -51,8 +51,8 @@ final class CustomConfigTest extends BaseTest
         $otp = $manager->otp();
         $this->assertGreaterThan(0, $otp);
 
-        //Max attempts+1 with wrong otp
-        for ($i = 0; $i < self::MAX_ATTEMPTS_TO_COMPLETE + 1; ++$i) {
+        //Max attempts with a wrong otp
+        for ($i = 0; $i < self::MAX_ATTEMPTS_TO_COMPLETE; ++$i) {
             //impossible to use expectException because it immediately takes us out of a test method
             try {
                 $incorrectOtp = $otp + 1;
@@ -64,7 +64,7 @@ final class CustomConfigTest extends BaseTest
             }
         }
 
-        //correct otp doesn't work anymore
+        //Max attempts exceeded: a correct otp doesn't work anymore
         try {
             $manager->complete($phone, $otp); //correct otp
             $this->fail('RateLimit has not been not thrown');
@@ -88,8 +88,8 @@ final class CustomConfigTest extends BaseTest
         $manager->sender($this->senderMock)->initiate($phone);
         $otp = $manager->otp();
         $this->assertGreaterThan(0, $otp);
-        //Max attempts with wrong otp
-        for ($i = 0; $i < self::MAX_ATTEMPTS_TO_COMPLETE; ++$i) {
+        //Max attempts - 1 with a wrong otp
+        for ($i = 0; $i < self::MAX_ATTEMPTS_TO_COMPLETE - 1; ++$i) {
             //impossible to use expectException because it immediately takes it out of a test method
             try {
                 $incorrectOtp = $otp - 1;
@@ -101,7 +101,7 @@ final class CustomConfigTest extends BaseTest
             }
         }
 
-        //correct otp still works
+        //Last chance: a correct otp still works
         $self = $manager->complete($phone, $otp);
         $this->assertEquals($manager, $self);
     }

@@ -17,7 +17,7 @@ abstract class BaseTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->senderMock = $this->createStub('AlexGeno\PhoneVerification\Sender\Twilio');
+        $this->senderMock = $this->createStub(\AlexGeno\PhoneVerification\Sender\Twilio::class);
 
         $this->redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
         //functional
