@@ -1,4 +1,5 @@
 ##Extensible and configurable phone verification
+
 ###Requirements
 - PHP >=7.4, <=8.1 
 - [ Composer](https://getcomposer.org/)
@@ -42,6 +43,18 @@ $manager->sender($sender)->initiate('+380935258272');
 $manager->complete('+380935258272', 1234);
 ```
 That's basically it. More advanced usage including **otp length customization**, **rate limiters**, **messages customization** you can derive from the following sections
+
+###Demo
+The initiation
+```shell
+php example/initiate.php --sender messageBird --storage redis --to +380935258272
+```
+The completion
+```shell
+php example/complete.php --storage redis --to +380935258272 --otp 1111
+```
+**Note**: Don't forget to rename *example/.example.env*   to *example/.env* and fill it with actual data
+
 ###Extending
 To add a new **sender** just create a new class
 ```php
@@ -79,7 +92,7 @@ $config = [
   ],
   'otp' => [
       'length' => 4, //1000..9999
-      'message' =>  (fn($otp) => sprintf('Your code is %d', $otp)), //The text a user receives
+      'message' =>  fn($otp) => sprintf('Your code is %d', $otp), //The text a user receives
   ]
 ];
 $storage = new Redis(new \Predis\Client('tcp://127.0.0.1:6379'));
@@ -151,18 +164,15 @@ use AlexGeno\PhoneVerification\Storage\MongoDb;
 
 $storage = new MongoDb(new \MongoDB\Client('mongodb://127.0.0.1:27017'), ['indexes'=> true]);
 ```
+
 ###Contribution
 
 ###Licence
 
-
+The code for Predis is distributed under the terms of the MIT license .
 
 ### TODO
 
 badges: unit tests passing, code quality, code coverage, downloads
-
-codesniffer settings strict type on first line see https://github.com/mongodb/mongo-php-library/blob/master/phpcs.xml.dist
-
-phpDoc
 
 add CONTRIBUTION.md
