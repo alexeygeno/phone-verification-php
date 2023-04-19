@@ -14,7 +14,7 @@ class Sender
     /**
      * Returns Twilio client instance
      * @return Twilio
-     * @throws \Twilio\Exceptions\ConfigurationException When configuration is incorrect.
+     * @throws \Twilio\Exceptions\ConfigurationException
      */
     public function twilio(): Twilio
     {

@@ -2,13 +2,12 @@
 
 namespace AlexGeno\PhoneVerification\Exception;
 
+/**
+ * Exception class that identifies OTP related errors
+ */
 class Otp extends \Exception
 {
-    const CODE_INCORRECT = 1;
-    const CODE_EXPIRED = 2;
-
-    public function __construct( string $message = '', $code = 0, \Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
+    // Possible codes(types) for the exception
+    public const CODE_INCORRECT = 1;
+    public const CODE_EXPIRED = 2;
 }

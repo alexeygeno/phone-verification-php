@@ -8,7 +8,7 @@
 
 
     <!-- Ignore warnings (n), show progress of the run (p), and show sniff names (s) -->
-    <arg value="ps"/>
+    <arg value="nps"/>
 
     <file>src</file>
     <file>tests</file>
@@ -20,10 +20,16 @@
          <exclude name="PSR12.Files.FileHeader.SpacingAfterBlock" />
          <exclude name="PSR12.Files.OpenTag.NotAlone" />
     </rule>
+    <rule ref="PSR12">
+         <exclude name="PSR12.Files.OpenTag.NotAlone" />
+    </rule>
     <rule ref="Squiz.Commenting">
         <exclude name="Squiz.Commenting.ClosingDeclarationComment" />
         <exclude name="Squiz.Commenting.FileComment.Missing" />
-        <exclude name="Squiz.Commenting.ClassComment.Missing" />
         <exclude name="Squiz.Commenting.VariableComment.Missing" />
+        <exclude name="Squiz.Commenting.FunctionComment.EmptyThrows" />
+        <exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
+        <exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
+        <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
     </rule>
 </ruleset>

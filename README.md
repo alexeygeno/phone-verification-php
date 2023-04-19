@@ -159,7 +159,7 @@ $storage = new MongoDb(new \MongoDB\Client('mongodb://127.0.0.1:27017'), ['index
 
 ### TODO
 
-add demo and test with real senders and storages
+badges: unit tests passing, code quality, code coverage, downloads
 
 codesniffer settings strict type on first line see https://github.com/mongodb/mongo-php-library/blob/master/phpcs.xml.dist
 

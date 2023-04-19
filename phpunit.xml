@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         colors="true" convertNoticesToExceptions="true"
+         colors="true"
+         convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
+         convertErrorsToExceptions="true"
          stopOnError="true"
          stopOnFailure="true"
          stopOnIncomplete="false"
