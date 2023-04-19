@@ -6,10 +6,10 @@
     <arg name="colors" />
     <arg name="report" value="summary"/>
 
-
     <!-- Ignore warnings (n), show progress of the run (p), and show sniff names (s) -->
     <arg value="nps"/>
 
+    <!-- Directories to execute-->
     <file>src</file>
     <file>tests</file>
     <file>example</file>
@@ -18,7 +18,7 @@
     <config name="php_version" value="74000"/>
     <rule ref="PSR12">
          <exclude name="PSR12.Files.FileHeader.SpacingAfterBlock" />
-         <exclude name="PSR12.Files.OpenTag.NotAlone" />
+<!--         <exclude name="PSR12.Files.OpenTag.NotAlone" />-->
     </rule>
     <rule ref="PSR12">
          <exclude name="PSR12.Files.OpenTag.NotAlone" />
