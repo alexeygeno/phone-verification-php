@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace AlexGeno\PhoneVerification\Storage;
 
@@ -63,8 +63,7 @@ class Redis implements I
 
     public function otp(string $sessionId): int
     {
-        $otp = $this->client->hget($this->sessionKey($sessionId), 'otp');
-        return  $otp ?? 0;
+        return  (int)$this->client->hget($this->sessionKey($sessionId), 'otp');;
     }
 
     public function otpCheckIncrement(string $sessionId): I
