@@ -16,12 +16,13 @@ class Redis implements I
      * Redis constructor
      *
      * @param Client $client
-     * @param array  $config Every param has a default value and could be replaced
-     *             [
-     *                'prefix' => 'pv:1',
-     *                'session_key' => 'session',
-     *                'session_counter_key' => 'session_counter'
-     *             ]
+     * @param array  $config
+     * Every param has a default value and could be replaced
+     * [
+     *     'prefix' => 'pv:1',
+     *     'session_key' => 'session',
+     *     'session_counter_key' => 'session_counter'
+     * ]
      */
     public function __construct(Client $client, array $config = [])
     {

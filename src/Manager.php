@@ -24,24 +24,28 @@ class Manager
      * Manager constructor
      *
      * @param IStorage $storage
-     * @param array    $config  Every param has a default value and could be replaced
-     *           [
-     *               'otp' => [
-     *                   'length' => 4,
-     *                   'message' =>  (fn($otp) => sprintf('Your code is %d', $otp)),
-     *                   'message_incorrect' =>  fn($otp) => 'Code is incorrect',
-     *                   'message_expired' =>  fn($periodSecs, $otp) => sprintf('Code is expired. It is valid for %d minutes.', $periodSecs / 60)
-     *               ],
-     *               'rate_limits' => [
-     *                   'initiate' => [
-     *                       'period_secs' => 86400, 'count' => 10,
-     *                       'message' => fn($phone, $periodSecs, $count) => (sprintf('You can send only %d sms in %d hours.', $count, $periodSecs / 60 / 60))
-     *                   ],
-     *                   'complete' => [
-     *                       'period_secs' => 300, 'count' => 5,
-     *                       'message' => fn($phone, $periodSecs, $count) => (sprintf('You have been using an incorrect code %d times in %d minutes.', $count, $periodSecs / 60))
-     *                   ]
-     *               ]
+     * @param array    $config
+     * Every param has a default value and could be replaced
+     * [
+     *     'otp' => [
+     *         'length' => 4,
+     *         'message' =>  (fn($otp) => sprintf('Your code is %d', $otp)),
+     *         'message_incorrect' =>  fn($otp) => 'Code is incorrect',
+     *         'message_expired' =>  fn($periodSecs, $otp) => sprintf('Code is expired. It is valid for %d minutes.', $periodSecs / 60)
+     *     ],
+     *     'rate_limits' => [
+     *         'initiate' => [
+     *             'period_secs' => 86400,
+     *             'count' => 10,
+     *             'message' => fn($phone, $periodSecs, $count) => (sprintf('You can send only %d sms in %d hours.', $count, $periodSecs / 60 / 60))
+     *          ],
+     *          'complete' => [
+     *             'period_secs' => 300,
+     *             'count' => 5,
+     *             'message' => fn($phone, $periodSecs, $count) => (sprintf('You have been using an incorrect code %d times in %d minutes.', $count, $periodSecs / 60))
+     *          ]
+     *     ]
+     * ]
      */
     public function __construct(IStorage $storage, array $config = [])
     {
@@ -55,12 +59,14 @@ class Manager
             'rate_limits' => [
                 'initiate' => [
                     // You can initiate confirmation 10 times per 24 hours!
-                    'period_secs' => 86400, 'count' => 10,
+                    'period_secs' => 86400,
+                    'count' => 10,
                     'message' => fn($phone, $periodSecs, $count) => sprintf('You can send only %d sms in %d hours.', $count, $periodSecs / 60 / 60)
                 ],
                 'complete' => [
                     // You can complete confirmation 5 times per 5 minutes!
-                    'period_secs' => 300, 'count' => 5,
+                    'period_secs' => 300,
+                    'count' => 5,
                     'message' => fn($phone, $periodSecs, $count) => sprintf('You have been using an incorrect code %d times in %d minutes.', $count, $periodSecs / 60)
                 ]
             ]

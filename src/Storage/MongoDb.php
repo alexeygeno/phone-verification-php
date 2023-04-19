@@ -18,13 +18,14 @@ class MongoDb implements I
      * MongoDb constructor
      *
      * @param Client $client
-     * @param array  $config Every param has a default value and could be replaced
-     *            [
-     *               'db' => 'phone_verification',
-     *               'collection_session' => 'session',
-     *               'collection_session_counter' => 'session_counter',
-     *               'indexes' => false
-     *            ]
+     * @param array  $config
+     * Every param has a default value and could be replaced
+     * [
+     *     'db' => 'phone_verification',
+     *     'collection_session' => 'session',
+     *     'collection_session_counter' => 'session_counter',
+     *     'indexes' => false
+     * ]
      */
     public function __construct(Client $client, array $config = [])
     {
