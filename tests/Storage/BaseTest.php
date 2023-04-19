@@ -5,10 +5,17 @@ namespace AlexGeno\PhoneVerificationTests\Storage;
 use PHPUnit\Framework\TestCase;
 use AlexGeno\PhoneVerification\Storage\I;
 
+/**
+ * Base class to test a storage
+ */
 abstract class BaseTest extends TestCase
 {
     protected I $storage;
 
+    /**
+     * Phone numbers data provider
+     * @return string[][]
+     */
     public function phoneNumbers(): array
     {
         return [
@@ -18,79 +25,41 @@ abstract class BaseTest extends TestCase
     }
 
     /**
+     * Checks if session exists after the creation
+     *
      * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
      */
-    public function testSessionSetup($phone): void
+    public function testSessionCreate(string $phone): void
     {
         $this->storage->sessionUp($phone, 12340, 300, 3600);
         $this->assertEquals(12340, $this->storage->otp($phone));
     }
 
     /**
+     * Checks if session data was updated after recreation
+     *
      * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
      */
-    public function testSessionReSetup($phone): void
+    public function testSessionRecreate(string $phone): void
     {
-        $this->storage->sessionUp($phone, 1233, 300, 3600*2)
-                      ->sessionUp($phone, 32104, 300, 3600*2); //session recreation
+        $this->storage->sessionUp($phone, 1233, 300, 3600 * 2)
+                      ->sessionUp($phone, 32104, 300, 3600 * 2);
+        // Session recreation
         $this->assertEquals(32104, $this->storage->otp($phone));
     }
 
     /**
+     * Checks if session counter works as expected
+     *
      * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
      */
-    public function testSessionReset($phone): void
-    {
-
-        $this->storage->sessionUp($phone, 1233, 300, 3600)
-            ->otpCheckIncrement($phone)
-            ->sessionDown($phone);
-
-        $this->assertEquals(0, $this->storage->otp($phone));
-        $this->assertEquals(0, $this->storage->otpCheckCounter($phone));
-    }
-
-
-    /**
-     * @dataProvider phoneNumbers
-     */
-    public function testOtpCheckCounter($phone): void
-    {
-        $this->storage->sessionUp($phone, 2345, 300, 3600*3)
-            ->otpCheckIncrement($phone);//first attempt
-
-        $this->assertEquals(1, $this->storage->otpCheckCounter($phone));
-
-        //2 more attempts
-        $this->storage->otpCheckIncrement($phone)->otpCheckIncrement($phone);
-
-        $this->assertEquals(3, $this->storage->otpCheckCounter($phone));
-    }
-
-
-    /**
-     * @dataProvider phoneNumbers
-     */
-    public function testSessionDown($phone): void
-    {
-        $this->storage->sessionUp($phone, 566743, 300, 3600*4);
-        $this->storage->sessionDown($phone);
-        $this->assertEquals(0, $this->storage->otp($phone));
-    }
-
-    /**
-     * @dataProvider phoneNumbers
-     */
-    public function testNonExistingOtp($phone): void
-    {
-        $this->storage->sessionUp($phone, 566743, 300, 3600*4);
-        $this->assertEquals(0, $this->storage->otp('+35926663454'));//phone with no session created beforehand
-    }
-
-    /**
-     * @dataProvider phoneNumbers
-     */
-    public function testSessionCounter($phone): void
+    public function testSessionCounter(string $phone): void
     {
         $otp = 2222;
         $sessionExpSecs = 60;
@@ -99,11 +68,74 @@ abstract class BaseTest extends TestCase
 
         $this->assertEquals(1, $this->storage->sessionCounter($phone));
 
-        //2 more session creation
+        // 2 more session creation
         $this->storage->sessionUp($phone, $otp, $sessionExpSecs, $sessionCounterExpSecs)
-            ->sessionUp($phone, $otp, $sessionExpSecs, $sessionCounterExpSecs);
+                      ->sessionUp($phone, $otp, $sessionExpSecs, $sessionCounterExpSecs);
 
         $this->assertEquals(3, $this->storage->sessionCounter($phone));
     }
 
+    /**
+     * Checks if otp is empty when the session was deleted beforehand
+     *
+     * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
+     */
+    public function testOtpAfterSessionDown(string $phone): void
+    {
+        $this->storage->sessionUp($phone, 566743, 300, 3600 * 4);
+        $this->storage->sessionDown($phone);
+        $this->assertEquals(0, $this->storage->otp($phone));
+    }
+
+    /**
+     * Checks if otp is empty for a non-existing session
+     *
+     * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
+     */
+    public function testOtpForNonExistingSession(string $phone): void
+    {
+        $this->storage->sessionUp($phone, 566743, 300, 3600 * 4);
+        // No session created beforehand for this phone number
+        $this->assertEquals(0, $this->storage->otp('+35926663454'));
+    }
+
+    /**
+     * Checks if otpCheckCounter is empty when the session was deleted beforehand
+     *
+     * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
+     */
+    public function testOtpCheckCounterAfterSessionDown(string $phone): void
+    {
+        $this->storage->sessionUp($phone, 1233, 300, 3600)
+                      ->otpCheckIncrement($phone)
+                      ->sessionDown($phone);
+
+        $this->assertEquals(0, $this->storage->otp($phone));
+        $this->assertEquals(0, $this->storage->otpCheckCounter($phone));
+    }
+
+    /**
+     * Checks if otpCheckCounter works as expected
+     *
+     * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
+     */
+    public function testOtpCheckCounter(string $phone): void
+    {
+        $this->storage->sessionUp($phone, 2345, 300, 3600 * 3)
+                      // First attempt
+                      ->otpCheckIncrement($phone);
+        $this->assertEquals(1, $this->storage->otpCheckCounter($phone));
+
+        // 2 more attempts
+        $this->storage->otpCheckIncrement($phone)->otpCheckIncrement($phone);
+        $this->assertEquals(3, $this->storage->otpCheckCounter($phone));
+    }
 }

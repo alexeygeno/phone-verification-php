@@ -8,8 +8,7 @@ use M6Web\Component\RedisMock\RedisMockFactory;
 use Predis\Client;
 
 /**
- * Class RedisTest
- * @package AlexGeno\PhoneVerificationTests\Storage
+ * Class to test the Redis storage
  */
 final class RedisTest extends BaseTest
 {
@@ -17,43 +16,51 @@ final class RedisTest extends BaseTest
 
     protected Client $redisMock;
 
+    /**
+     * This method is called before each test
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
-        //functional
-        //$this->redisMock = new \Predis\Client('redis://redis:6379');
-
         $this->storage = new Redis($this->redisMock);
     }
 
-    protected function tearDown():void{
+    /**
+     * This method is called after each test
+     * @return void
+     */
+    protected function tearDown(): void
+    {
         $this->redisMock->flushdb();
     }
 
-
     /**
+     * Checks that session and sessionCounter expirations work as expected
+     *
      * @dataProvider phoneNumbers
      * @runInSeparateProcess
      * @link https://github.com/php-mock/php-mock-phpunit#restrictions
+     * @param string $phone
+     * @return void
      */
-    public function testExpiration($phone): void
+    public function testExpiration(string $phone): void
     {
-        //emulate like it's been 20 seconds between the sessionUp call and the otp call
         $time = $this->getFunctionMock('M6Web\Component\RedisMock', "time");
 
         $sessionExpSecs = 300;
         $sessionCounterExpSecs = 3600;
 
-        //emulate that it's been 10 seconds since $sessionExpSecs and $sessionCounterExpSecs
-        $time->expects($this->exactly(4))->willReturnOnConsecutiveCalls(0, 0, $sessionExpSecs+10, $sessionCounterExpSecs+10);
+        // Emulate that it's been 10 seconds since $sessionExpSecs and $sessionCounterExpSecs
+        $time->expects($this->exactly(4))->willReturnOnConsecutiveCalls(0, 0, $sessionExpSecs + 10, $sessionCounterExpSecs + 10);
 
         $this->storage->sessionUp($phone, 566743, $sessionExpSecs, $sessionCounterExpSecs);
 
-        //check that session doesn't exists
+        // Check that session doesn't exists
         $otp = $this->storage->otp($phone);
         $this->assertEquals(0, $otp);
 
-        //check that sessionCounter doesn't exists
+        // Check that sessionCounter doesn't exists
         $this->assertEquals(0, $this->storage->sessionCounter($phone));
     }
 }

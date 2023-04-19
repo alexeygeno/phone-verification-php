@@ -56,12 +56,12 @@ class Manager
                 'initiate' => [
                     // You can initiate confirmation 10 times per 24 hours!
                     'period_secs' => 86400, 'count' => 10,
-                    'message' => fn($phone, $periodSecs, $count) => (sprintf('You can send only %d sms in %d hours.', $count, $periodSecs / 60 / 60))
+                    'message' => fn($phone, $periodSecs, $count) => sprintf('You can send only %d sms in %d hours.', $count, $periodSecs / 60 / 60)
                 ],
                 'complete' => [
                     // You can complete confirmation 5 times per 5 minutes!
                     'period_secs' => 300, 'count' => 5,
-                    'message' => fn($phone, $periodSecs, $count) => (sprintf('You have been using an incorrect code %d times in %d minutes.', $count, $periodSecs / 60))
+                    'message' => fn($phone, $periodSecs, $count) => sprintf('You have been using an incorrect code %d times in %d minutes.', $count, $periodSecs / 60)
                     ]
             ]
         ], $config);

@@ -6,11 +6,17 @@ use AlexGeno\PhoneVerification\Exception;
 use AlexGeno\PhoneVerification\Exception\Otp;
 use AlexGeno\PhoneVerification\Manager;
 
-
+/**
+ * Class to test Manager with a default config
+ */
 final class DefaultConfigTest extends BaseTest
 {
     protected Manager $manager;
 
+    /**
+     * This method is called before each test
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -18,9 +24,13 @@ final class DefaultConfigTest extends BaseTest
     }
 
     /**
+     * Checks if the verification process goes as expected using a correct otp to complete
+     *
      * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
      */
-    public function testCorrectOtp($phone): void
+    public function testCorrectOtp(string $phone): void
     {
         $this->manager->sender($this->senderMock)->initiate($phone);
         $otp = $this->manager->otp();
@@ -31,9 +41,13 @@ final class DefaultConfigTest extends BaseTest
     }
 
     /**
+     * Checks if the verification process goes as expected using an incorrect otp to complete
+     *
      * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
      */
-    public function testIncorrectOtpException($phone): void
+    public function testIncorrectOtpException(string $phone): void
     {
         $this->manager->sender($this->senderMock)->initiate($phone);
         $otp = $this->manager->otp();
@@ -49,17 +63,22 @@ final class DefaultConfigTest extends BaseTest
     }
 
     /**
+     * Checks if the verification process goes as expected using an expired otp to complete
+     *
      * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
      */
-    public function testExpiredOtpException($phone): void
+    public function testExpiredOtpException(string $phone): void
     {
         $this->manager->sender($this->senderMock)->initiate($phone);
         $otp = $this->manager->otp();
 
         $this->assertIsInt($otp);
         $this->assertGreaterThan(0, $otp);
-        $this->storageMock->sessionDown($phone);//emulate expiration
 
+        // Emulate expiration
+        $this->storageMock->sessionDown($phone);
         try {
             $this->manager->complete($phone, $otp);
             $this->fail('Otp has not been thrown');
@@ -69,9 +88,13 @@ final class DefaultConfigTest extends BaseTest
     }
 
     /**
+     * Checks if the initiation without a sender throws Exception
+     *
      * @dataProvider phoneNumbers
+     * @param string $phone
+     * @return void
      */
-    public function testInitiationWhenNoSender($phone): void
+    public function testInitiationWhenNoSender(string $phone): void
     {
         $this->expectException(Exception::class);
         $this->manager->initiate($phone);

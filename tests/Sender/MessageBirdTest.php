@@ -2,39 +2,60 @@
 
 namespace AlexGeno\PhoneVerificationTests\Sender;
 
+use AlexGeno\PhoneVerification\Sender\MessageBird;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class to test the MessageBird sender
+ */
 final class MessageBirdTest extends TestCase
 {
-    public function clientData(): array
+    /**
+     * Api client data data provider
+     *
+     * @return string[][]
+     */
+    public function apiClientData(): array
     {
         return [
-             ['MySuperBrand', '+442077206312', 'Your code is 34566'], //from, to, text
-             ['MyGreatBrand', '+15417543010', 'Your code is 45456']
+            // Values: from, to, text
+            'api_client_data_1' => ['MySuperBrand', '+442077206312', 'Your code is 34566'],
+            'api_client_data_2' => ['MyGreatBrand', '+15417543010', 'Your code is 45456']
         ];
     }
 
+
     /**
-     * @dataProvider clientData
+     * Checks if the invoke method is called as expected
+     *
+     * @dataProvider apiClientData
+     * @param string $from
+     * @param string $to
+     * @param string $text
+     * @return void
      */
-    public function testInvoke($from, $to, $text)
+    public function testInvoke(string $from, string $to, string $text): void
     {
         $clientMock = $this->getMockBuilder(\MessageBird\Client::class)->disableOriginalConstructor()->getMock();
 
-        $messagesMock = $this->createMock(\MessageBird\Resources\Messages::class);
+        $resourceMessagesMock = $this->createMock(\MessageBird\Resources\Messages::class);
 
-        $messageMock = $this->createMock(\MessageBird\Objects\Message::class);
-        $messageMock->originator = $from;
-        $messageMock->recipients = [$to];
-        $messageMock->body = $text;
+        $objectMessageMock = $this->createMock(\MessageBird\Objects\Message::class);
+        $objectMessageMock->originator = $from;
+        $objectMessageMock->recipients = [$to];
+        $objectMessageMock->body = $text;
 
-        //Mocking $this->client->messages inside MessageBird::invoke
-        $clientMock->messages = $messagesMock;
+        // Mocking $this->client->messages inside MessageBird::invoke
+        $clientMock->messages = $resourceMessagesMock;
 
-        //need clone for having 2 different objects for comparison
-        $messagesMock->expects($this->once())->method('create')->with(clone $messageMock);
+        // Clone to compare 2 different objects by their data.
+        // Since objects always passes by reference without cloning we can't see if
+        // \MessageBird\Objects\Message will be built incorrectly inside MessageBird::invoke
+        $resourceMessagesMock->expects($this->once())
+                             ->method('create')
+                             ->with(clone $objectMessageMock);
 
-        $sender = new \AlexGeno\PhoneVerification\Sender\MessageBird($clientMock, $messageMock);
+        $sender = new MessageBird($clientMock, $objectMessageMock);
         $sender->invoke($to, $text);
     }
 }

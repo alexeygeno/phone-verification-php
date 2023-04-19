@@ -18,7 +18,10 @@ class Sender
      */
     public function twilio(): Twilio
     {
-        return new Twilio(new \Twilio\Rest\Client(getenv('TWILIO_ACCOUNT_SID'), getenv('TWILIO_AUTH_TOKEN')), ['from' => getenv('TWILIO_FROM')]);
+        return new Twilio(
+            new \Twilio\Rest\Client(getenv('TWILIO_ACCOUNT_SID'), getenv('TWILIO_AUTH_TOKEN')),
+            ['from' => getenv('TWILIO_FROM')]
+        );
     }
 
     /**
@@ -27,7 +30,10 @@ class Sender
      */
     public function vonage(): Vonage
     {
-        return new Vonage(new \Vonage\Client(new \Vonage\Client\Credentials\Basic(getenv('VONAGE_API_KEY'), getenv('VONAGE_API_SECRET'))), getenv('VONAGE_BRAND_NAME'));
+        return new Vonage(
+            new \Vonage\Client(new \Vonage\Client\Credentials\Basic(getenv('VONAGE_API_KEY'), getenv('VONAGE_API_SECRET'))),
+            getenv('VONAGE_BRAND_NAME')
+        );
     }
 
     /**
