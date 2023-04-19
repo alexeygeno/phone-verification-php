@@ -1,12 +1,13 @@
-##Extensible and configurable phone verification
+## Extensible and configurable phone verification
 
-###Requirements
+### Requirements
 - PHP >=7.4, <=8.1 
 - [ Composer](https://getcomposer.org/)
 - One of the supported storage clients: [ Predis](https://github.com/predis/predis), [ MongoDb](https://github.com/mongodb/mongo-php-library)
 - One of the supported sender SDKs: [ Twilio](https://github.com/twilio/twilio-php), [ MessageBird](https://github.com/messagebird/php-rest-api), [Vonage ](https://github.com/Vonage/vonage-php-sdk-core)
 - A smile on your face :smile:
-###Installation
+
+### Installation
 This package
 ```shell
 composer require alexgeno/phone-verification
@@ -19,9 +20,9 @@ Twilio as an option
 ```shell
 composer require twilio/sdk
 ```
-###Basic Usage
+### Basic Usage
 
-####Instantiation
+#### Instantiation
 ```php
 use AlexGeno\PhoneVerification\Storage\Redis;
 use AlexGeno\PhoneVerification\Sender\Twilio;
@@ -31,7 +32,7 @@ $storage = new Redis(new \Predis\Client('tcp://127.0.0.1:6379'));
 $sender = new Twilio(new \Twilio\Rest\Client('ACXXXXXX', 'YYYYYY'));
 $manager = new Manager($storage);
 ```
-####There are two stages of the verification process
+#### There are two stages of the verification process
 
 1) **The initiation** - for this stage we need both a **storage** and a **sender**. As a result a user receives an [otp](https://en.wikipedia.org/wiki/One-time_password) on the phone
    
@@ -44,7 +45,7 @@ $manager->complete('+380935258272', 1234);
 ```
 That's basically it. More advanced usage including **otp length customization**, **rate limiters**, **messages customization** you can derive from the following sections
 
-###Demo
+### Demo
 The initiation
 ```shell
 php example/initiate.php --sender messageBird --storage redis --to +380935258272
@@ -55,7 +56,7 @@ php example/complete.php --storage redis --to +380935258272 --otp 1111
 ```
 **Note**: Don't forget to rename *example/.example.env*   to *example/.env* and fill it with actual data
 
-###Extending
+### Extending
 To add a new **sender** just create a new class
 ```php
 namespace AlexGeno\PhoneVerification\Sender;
@@ -74,8 +75,8 @@ class DynamoDb implements I
     //...
 }
 ```
-###Advanced usage
-####The Initiation stage - Rate limit params and Otp params
+### Advanced usage
+#### The Initiation stage - Rate limit params and Otp params
 ```php
 use AlexGeno\PhoneVerification\Storage\Redis;
 use AlexGeno\PhoneVerification\Sender\Twilio;
@@ -109,7 +110,7 @@ catch(RateLimit $e)
 }
 ```
 
-####The Completion stage - Rate limit params and Otp params
+#### The Completion stage - Rate limit params and Otp params
 ```php
 use AlexGeno\PhoneVerification\Storage\Redis;
 use AlexGeno\PhoneVerification\Manager;
@@ -155,7 +156,7 @@ catch(Otp $e)
 It is split here just to make it more clear what belongs to **the initiation stage** and what to **the completion stage**
 <br />**Note**: There is a default value for every single **$config** option. You should redefine only what you need
 
-####MongoDb indexes
+#### MongoDb indexes
 If you use MongoDb as a **storage** you may have noticed that the expiration functionality is based on indexes.
 They can be created automatically. It's recommended though to use this option only on DEV environment. It's disabled by default.
 
@@ -165,9 +166,9 @@ use AlexGeno\PhoneVerification\Storage\MongoDb;
 $storage = new MongoDb(new \MongoDB\Client('mongodb://127.0.0.1:27017'), ['indexes'=> true]);
 ```
 
-###Contribution
+### Contribution
 
-###Licence
+### Licence
 
 The code for Predis is distributed under the terms of the MIT license .
 
