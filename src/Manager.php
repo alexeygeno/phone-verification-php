@@ -40,8 +40,8 @@ class Manager
      *                   'complete' => [
      *                       'period_secs' => 300, 'count' => 5,
      *                       'message' => fn($phone, $periodSecs, $count) => (sprintf('You have been using an incorrect code %d times in %d minutes.', $count, $periodSecs / 60))
+     *                   ]
      *               ]
-     *            ]
      */
     public function __construct(IStorage $storage, array $config = [])
     {
@@ -62,7 +62,7 @@ class Manager
                     // You can complete confirmation 5 times per 5 minutes!
                     'period_secs' => 300, 'count' => 5,
                     'message' => fn($phone, $periodSecs, $count) => sprintf('You have been using an incorrect code %d times in %d minutes.', $count, $periodSecs / 60)
-                    ]
+                ]
             ]
         ], $config);
 
@@ -87,7 +87,7 @@ class Manager
     }
 
     /**
-     * Returns a generated otp
+     * Returns generated otp
      *
      * @return integer
      */

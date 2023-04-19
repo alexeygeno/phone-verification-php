@@ -21,7 +21,7 @@ class Redis implements I
      *                'prefix' => 'pv:1',
      *                'session_key' => 'session',
      *                'session_counter_key' => 'session_counter'
-     *            ]
+     *             ]
      */
     public function __construct(Client $client, array $config = [])
     {
@@ -53,7 +53,7 @@ class Redis implements I
     }
 
     /**
-     * Creates a session and increments its counter
+     * Creates session and increments its counter
      *
      * @param string  $sessionId
      * @param integer $otp

@@ -8,7 +8,7 @@ namespace AlexGeno\PhoneVerification\Storage;
 interface I
 {
     /**
-     * Creates a session and increments its counter
+     * Creates session and increments its counter
      *
      * @param string  $sessionId
      * @param integer $otp
