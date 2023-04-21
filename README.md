@@ -1,16 +1,23 @@
-## Extensible and configurable phone verification
+#Phone Verification #
 
-[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPUnit/badge.svg)](https://github.com/squizlabs/PHP_CodeSniffer/actions)
-[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/CodeSniffer/badge.svg)](https://github.com/squizlabs/PHP_CodeSniffer/actions)
-[![Coverage Status](https://coveralls.io/repos/github/alexeygeno/phone-verification-php/badge.svg?branch=main)](https://coveralls.io/github/alexeygeno/phone-verification-php)
-### Requirements
-- PHP 7.4, 8.0, 8.1
+[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPUnit/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
+[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/CodeSniffer/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
+[![Coverage Status](https://coveralls.io/repos/github/alexeygeno/phone-verification-php/badge.svg)](https://coveralls.io/github/alexeygeno/phone-verification-php)
+
+The usual way to sign in/sign up on a modern website is:
+- A user initiates verification submitting a phone number 
+- The user receives a sms or call with an [ otp](https://en.wikipedia.org/wiki/One-time_password)
+- The user completes verification submitting the [ otp](https://en.wikipedia.org/wiki/One-time_password)
+
+This library allows to set this up just with a few lines of code.
+## Requirements ##
+- One of the supported PHP versions: 7.4, 8.0, 8.1
 - [ Composer](https://getcomposer.org/)
 - One of the supported storage clients: [ Predis](https://github.com/predis/predis), [ MongoDb](https://github.com/mongodb/mongo-php-library)
 - One of the supported sender SDKs: [ Twilio](https://github.com/twilio/twilio-php), [ MessageBird](https://github.com/messagebird/php-rest-api), [Vonage ](https://github.com/Vonage/vonage-php-sdk-core)
 - A smile on your face :smile:
 
-### Installation
+## Installation ##
 This package
 ```shell
 composer require alexgeno/phone-verification
@@ -23,9 +30,9 @@ Twilio as an option
 ```shell
 composer require twilio/sdk
 ```
-### Basic Usage
+## Basic Usage ##
 
-#### Instantiation
+### Instantiation ###
 ```php
 use AlexGeno\PhoneVerification\Storage\Redis;
 use AlexGeno\PhoneVerification\Sender\Twilio;
@@ -35,7 +42,7 @@ $storage = new Redis(new \Predis\Client('tcp://127.0.0.1:6379'));
 $sender = new Twilio(new \Twilio\Rest\Client('ACXXXXXX', 'YYYYYY'));
 $manager = new Manager($storage);
 ```
-#### There are two stages of the verification process
+### There are two stages of the verification process ###
 
 1) **The initiation** - for this stage we need both a **storage** and a **sender**. As a result a user receives an [otp](https://en.wikipedia.org/wiki/One-time_password) on the phone
    
@@ -48,18 +55,18 @@ $manager->complete('+380935258272', 1234);
 ```
 That's basically it. More advanced usage including **otp length customization**, **rate limiters**, **messages customization** you can derive from the following sections
 
-### Demo
-The initiation
+## Demo
+**The initiation**
 ```shell
 php example/initiate.php --sender messageBird --storage redis --to +380935258272
 ```
-The completion
+**The completion**
 ```shell
 php example/complete.php --storage redis --to +380935258272 --otp 1111
 ```
-**Note**: Don't forget to rename *example/.example.env*   to *example/.env* and fill it with actual data
+**Note**: Don't forget to rename *example/.example.env*   to *example/.env* and fill in it with actual data
 
-### Extending
+## Extending
 To add a new **sender** just create a new class
 ```php
 namespace AlexGeno\PhoneVerification\Sender;
@@ -78,8 +85,8 @@ class DynamoDb implements I
     //...
 }
 ```
-### Advanced usage
-#### The Initiation stage - Rate limit params and Otp params
+## Advanced usage
+### The Initiation: Rate limit params and Otp params
 ```php
 use AlexGeno\PhoneVerification\Storage\Redis;
 use AlexGeno\PhoneVerification\Sender\Twilio;
@@ -113,7 +120,7 @@ catch(RateLimit $e)
 }
 ```
 
-#### The Completion stage - Rate limit params and Otp params
+### The Completion: Rate limit params and Otp params
 ```php
 use AlexGeno\PhoneVerification\Storage\Redis;
 use AlexGeno\PhoneVerification\Manager;
@@ -159,7 +166,7 @@ catch(Otp $e)
 It is split here just to make it more clear what belongs to **the initiation stage** and what to **the completion stage**
 <br />**Note**: There is a default value for every single **$config** option. You should redefine only what you need
 
-#### MongoDb indexes
+### MongoDb indexes
 If you use MongoDb as a **storage** you may have noticed that the expiration functionality is based on indexes.
 They can be created automatically. It's recommended though to use this option only on DEV environment. It's disabled by default.
 
@@ -169,14 +176,12 @@ use AlexGeno\PhoneVerification\Storage\MongoDb;
 $storage = new MongoDb(new \MongoDB\Client('mongodb://127.0.0.1:27017'), ['indexes'=> true]);
 ```
 
-### Contribution
+## Contribution
 
-### Licence
+## Licence
 
-The code for Predis is distributed under the terms of the MIT license .
+The code for **Phone Verification** is distributed under the terms of the [MIT](LICENSE) license.
 
 ### TODO
-
-badges: unit tests passing, code quality, code coverage, downloads
 
 add CONTRIBUTION.md
