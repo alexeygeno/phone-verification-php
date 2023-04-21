@@ -1,11 +1,11 @@
-name: PHPUnit
+name: CodeSniffer
 
 on:
   push:
   pull_request:
 
 jobs:
-  phpunit:
+  cs:
     runs-on: ubuntu-latest
 
     strategy:
@@ -23,8 +23,6 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          coverage: xdebug
-          extensions: mongodb
           php-version: ${{ matrix.php }}
           tools: composer:v2
 
@@ -35,5 +33,5 @@ jobs:
           max_attempts: 5
           timeout_minutes: 5
 
-      - name: Run PHPUnit tests
-        run: vendor/bin/phpunit --coverage-text
+      - name: Run PHP CodeSniffer
+        run: vendor/bin/cs
