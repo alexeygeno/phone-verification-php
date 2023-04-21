@@ -1,15 +1,15 @@
-#Phone Verification #
+# Phone Verification #
 
 [![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPUnit/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
 [![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/CodeSniffer/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
 [![Coverage Status](https://coveralls.io/repos/github/alexeygeno/phone-verification-php/badge.svg)](https://coveralls.io/github/alexeygeno/phone-verification-php)
 
-The usual way to sign in/sign up on a modern website is:
+The usual way to sign in/sign up on a modern website or mobile app is:
 - A user initiates verification submitting a phone number 
-- The user receives a sms or call with an [ otp](https://en.wikipedia.org/wiki/One-time_password)
+- The user receives an sms or call with an [ otp](https://en.wikipedia.org/wiki/One-time_password)
 - The user completes verification submitting the [ otp](https://en.wikipedia.org/wiki/One-time_password)
 
-This library allows to set this up just with a few lines of code.
+This extensible and configurable library allows to set this up just with a few lines of code.
 ## Requirements ##
 - One of the supported PHP versions: 7.4, 8.0, 8.1
 - [ Composer](https://getcomposer.org/)
@@ -86,7 +86,7 @@ class DynamoDb implements I
 }
 ```
 ## Advanced usage
-### The Initiation: Rate limit params and Otp params
+**The Initiation:** Rate limit params and Otp params
 ```php
 use AlexGeno\PhoneVerification\Storage\Redis;
 use AlexGeno\PhoneVerification\Sender\Twilio;
@@ -120,7 +120,7 @@ catch(RateLimit $e)
 }
 ```
 
-### The Completion: Rate limit params and Otp params
+**The Completion**: Rate limit params and Otp params
 ```php
 use AlexGeno\PhoneVerification\Storage\Redis;
 use AlexGeno\PhoneVerification\Manager;
@@ -180,7 +180,7 @@ $storage = new MongoDb(new \MongoDB\Client('mongodb://127.0.0.1:27017'), ['index
 
 ## Licence
 
-The code for **Phone Verification** is distributed under the terms of the [MIT](LICENSE) license.
+The code for **Phone Verification** is distributed under the terms of the [MIT](LICENSE.txt) license.
 
 ### TODO
 
