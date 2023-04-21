@@ -32,7 +32,7 @@ final class MessageBirdTest extends TestCase
      * @param string $from
      * @param string $to
      * @param string $text
-     * @return
+     * @return void
      */
     public function testInvoke(string $from, string $to, string $text): void
     {
