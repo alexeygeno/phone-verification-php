@@ -29,10 +29,11 @@ jobs:
       - name: Install composer dependencies
         uses: nick-invision/retry@v2
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           command: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-plugins --no-scripts --no-progress
           max_attempts: 5
           timeout_minutes: 5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run PHP CodeSniffer
         run: vendor/bin/phpcs
