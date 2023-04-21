@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPUnit/badge.svg)](https://github.com/squizlabs/PHP_CodeSniffer/actions)
 [![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/CodeSniffer/badge.svg)](https://github.com/squizlabs/PHP_CodeSniffer/actions)
+[![Coverage Status](https://coveralls.io/repos/github/alexeygeno/phone-verification-php/badge.svg?branch=main)](https://coveralls.io/github/alexeygeno/phone-verification-php)
 ### Requirements
 - PHP 7.4, 8.0, 8.1
 - [ Composer](https://getcomposer.org/)
