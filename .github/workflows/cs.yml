@@ -34,4 +34,4 @@ jobs:
           timeout_minutes: 5
 
       - name: Run PHP CodeSniffer
-        run: vendor/bin/cs
+        run: vendor/bin/phpcs
