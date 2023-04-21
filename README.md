@@ -1,7 +1,9 @@
 ## Extensible and configurable phone verification
 
+[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPUnit/badge.svg)](https://github.com/squizlabs/PHP_CodeSniffer/actions)
+[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/CodeSniffer/badge.svg)](https://github.com/squizlabs/PHP_CodeSniffer/actions)
 ### Requirements
-- PHP >=7.4, <=8.1 
+- PHP 7.4, 8.0, 8.1
 - [ Composer](https://getcomposer.org/)
 - One of the supported storage clients: [ Predis](https://github.com/predis/predis), [ MongoDb](https://github.com/mongodb/mongo-php-library)
 - One of the supported sender SDKs: [ Twilio](https://github.com/twilio/twilio-php), [ MessageBird](https://github.com/messagebird/php-rest-api), [Vonage ](https://github.com/Vonage/vonage-php-sdk-core)
