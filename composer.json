@@ -1,14 +1,15 @@
 {
   "name": "alexeygeno/phone-verification-php",
-  "description":"A php package to verify a user via phone",
-  "keywords":["otp","phone", "verification", "sms", "call", "2fa", "2factor","authentication"],
+  "description":"Extensible and configurable php library to verify a phone",
+  "keywords":["otp","phone", "verification", "verify", "sms", "call", "2fa", "2factor","authentication", "signin",
+              "signup", "twilio", "messagebird", "vonage", "redis", "mongo" ],
   "type":"library",
   "license":"MIT",
   "authors":[
     {
       "name":"Alexey Geno",
       "email": "alexeygeno@gmail.com",
-      "homepage":"https://linkedin.com/in/alexeygeno"
+      "homepage":"https://github.com/alexeygeno"
     }
   ],
   "homepage": "https://github.com/alexeygeno/phone-verification-php",

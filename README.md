@@ -44,27 +44,27 @@ $manager = new Manager($storage);
 ```
 ### There are two stages of the verification process ###
 
-1) **The initiation** - for this stage we need both a **storage** and a **sender**. As a result a user receives an [otp](https://en.wikipedia.org/wiki/One-time_password) on the phone
+1) **The initiation** -  a **storage** and a **sender** are required for this stage. A user submits a phone and as a result receives an [otp](https://en.wikipedia.org/wiki/One-time_password)
    
 ```php
 $manager->sender($sender)->initiate('+380935258272');
 ```
-2) **The completion** - for this stage we need only a storage. The user enters the [ otp](https://en.wikipedia.org/wiki/One-time_password) to verify the phone
+2) **The completion** - only a storage is required for this stage. The user submits the [ otp](https://en.wikipedia.org/wiki/One-time_password) to verify the phone
 ```php
 $manager->complete('+380935258272', 1234);
 ```
-That's basically it. More advanced usage including **otp length customization**, **rate limiters**, **messages customization** you can derive from the following sections
+That's basically it. More advanced usage including **otp length customization**, **rate limiters**, **messages customization** you can derive from the following sections.
 
 ## Demo
 **The initiation**
 ```shell
-php example/initiate.php --sender messageBird --storage redis --to +380935258272
+php example/initiate.php --storage redis --sender messageBird --to +380935258272
 ```
 **The completion**
 ```shell
 php example/complete.php --storage redis --to +380935258272 --otp 1111
 ```
-**Note**: Don't forget to rename *example/.example.env*   to *example/.env* and fill in it with actual data
+**Note**: Don't forget to rename *example/.example.env*   to *example/.env* and fill in it with actual data.
 
 ## Extending
 To add a new **sender** just create a new class
@@ -164,7 +164,7 @@ catch(Otp $e)
 ```
 **Note:** Of course,  you can define all **$config** options and instantiate all classes at the same place in your code.
 It is split here just to make it more clear what belongs to **the initiation stage** and what to **the completion stage**
-<br />**Note**: There is a default value for every single **$config** option. You should redefine only what you need
+<br />**Note**: Every single **$config** option has a default value. You should redefine only what you need.
 
 ### MongoDb indexes
 If you use MongoDb as a **storage** you may have noticed that the expiration functionality is based on indexes.
@@ -184,4 +184,18 @@ The code for **Phone Verification** is distributed under the terms of the [MIT](
 
 ### TODO
 
-add CONTRIBUTION.md
+
+README.md Installation for dev and prod with collapsed block for prod
+Docker compose - php instead of php-fpm, no foreign ports, clean up
+
+add CONTRIBUTION.md  docker set up, unit tests, cs, example
+
+
+Check spelling
+Push package at packagist
+
+
+chekc that tests autoloads only for dev env
+
+rename git username to alexgeno and change it everywhere in code
+alexgeno@gmail.com
