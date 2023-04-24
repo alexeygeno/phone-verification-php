@@ -56,7 +56,7 @@ class MongoDb implements I
      * @param integer $sessionCounterExpSecs
      * @return $this
      */
-    public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): MongoDb
+    public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): self
     {
         // phpcs:disable Squiz.Commenting.BlockComment.SingleLine
 
@@ -131,7 +131,7 @@ class MongoDb implements I
      * @param string $sessionId
      * @return $this
      */
-    public function sessionDown(string $sessionId): MongoDb
+    public function sessionDown(string $sessionId): self
     {
         $this->collection($this->config['collection_session'])->deleteOne(['id' => $sessionId]);
         return $this;
@@ -168,7 +168,7 @@ class MongoDb implements I
      * @param string $sessionId
      * @return $this
      */
-    public function otpCheckIncrement(string $sessionId): MongoDb
+    public function otpCheckIncrement(string $sessionId): self
     {
         $this->collection($this->config['collection_session'])->updateOne(['id' => $sessionId], ['$inc' => ['otp_check_count' => 1]]);
         return $this;
