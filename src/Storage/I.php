@@ -16,7 +16,7 @@ interface I
      * @param integer $sessionCounterExpSecs
      * @return I
      */
-    public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): I;
+    public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): self;
 
     /**
      * Drops session by its id
@@ -24,7 +24,7 @@ interface I
      * @param string $sessionId
      * @return I
      */
-    public function sessionDown(string $sessionId): I;
+    public function sessionDown(string $sessionId): self;
 
     /**
      * Returns the amount of recreated sessions
@@ -48,7 +48,7 @@ interface I
      * @param string $sessionId
      * @return I
      */
-    public function otpCheckIncrement(string $sessionId): I;
+    public function otpCheckIncrement(string $sessionId): self;
 
     /**
      * Returns the amount of otp checks for the session

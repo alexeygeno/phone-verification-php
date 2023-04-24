@@ -62,7 +62,7 @@ class Redis implements I
      * @param integer $sessionCounterExpSecs
      * @return $this
      */
-    public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): Redis
+    public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): self
     {
         // Session
         $this->client->hmset($this->sessionKey($sessionId), ['otp' => $otp, 'otp_check_count' => 0 ]);
@@ -95,7 +95,7 @@ class Redis implements I
      * @param string $sessionId
      * @return $this
      */
-    public function sessionDown(string $sessionId): Redis
+    public function sessionDown(string $sessionId): self
     {
         $this->client->del($this->sessionKey($sessionId));
         return $this;
@@ -129,7 +129,7 @@ class Redis implements I
      * @param string $sessionId
      * @return $this
      */
-    public function otpCheckIncrement(string $sessionId): Redis
+    public function otpCheckIncrement(string $sessionId): self
     {
         $this->client->hincrby($this->sessionKey($sessionId), 'otp_check_count', 1);
         return $this;
