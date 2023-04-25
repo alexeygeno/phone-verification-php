@@ -14,8 +14,8 @@ $storage = (new Storage())->{$options['storage']}();
 
 try {
     (new Manager($storage))->complete($options['to'], (int)$options['otp']);
-    echo "The completion has been succeeded.\n";
+    echo "The completion succeeded.\n";
 } catch (Exception $e) {
-    echo "The completion has been failed.\n";
+    echo "The completion failed.\n";
     echo get_class($e) . ': ' . $e->getMessage() . "\n";
 }

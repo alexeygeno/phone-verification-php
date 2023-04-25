@@ -18,8 +18,8 @@ try {
     $response = (new Manager($storage))->sender($sender)->initiate($options['to']);
     echo "API RESPONSE:\n";
     print_r($response);
-    echo "The initiation has been succeeded. Check your phone for otp!\n";
+    echo "The initiation succeeded. Check your phone for otp!\n";
 } catch (Exception $e) {
-    echo "The initiation has been failed.\n";
+    echo "The initiation failed.\n";
     echo get_class($e) . ': ' . $e->getMessage() . "\n";
 }

@@ -86,7 +86,7 @@ class Manager
      * @param ISender $sender
      * @return $this
      */
-    public function sender(ISender $sender): Manager
+    public function sender(ISender $sender): self
     {
         $this->sender = $sender;
         return $this;
@@ -136,7 +136,7 @@ class Manager
      * @throws Otp
      * @throws RateLimit
      */
-    public function complete(string $phone, int $otp): Manager
+    public function complete(string $phone, int $otp): self
     {
         $rateLimit = $this->config['rate_limits']['complete'];
 

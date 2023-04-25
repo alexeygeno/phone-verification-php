@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Phone verification code standard">
+<ruleset name="Phone Verification">
     <arg name="basepath" value="." />
     <arg name="extensions" value="php" />
     <arg name="parallel" value="80" />

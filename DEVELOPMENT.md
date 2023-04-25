@@ -11,28 +11,28 @@ Build docker images and start containers
 ```shell
 docker compose up -d
 ```
-Get into the container 
+Get into the container
 ```shell
 docker compose exec php sh
 ```
-#PHPUnit
+## PHPUnit
 Run a method
 ```shell
-$ vendor/bin/phpunit --filter 'AlexGeno\\PhoneVerificationTests\\Manager\\DefaultConfigTest::testExpiredOtpException'  --debug
+vendor/bin/phpunit --filter 'AlexGeno\\PhoneVerificationTests\\Manager\\DefaultConfigTest::testExpiredOtpException'  --debug
 ```
 Check code coverage
 ```shell
-$ vendor/bin/phpunit --coverage-text
+vendor/bin/phpunit --coverage-text
 ```
-#CodeSniffer
+## CodeSniffer
 Check
 ```shell
-$ vendor/bin/phpcs 
+vendor/bin/phpcs 
 ```
 
 Fix
 ```shell
-$ vendor/bin/phpcbf
+vendor/bin/phpcbf
 ```
 
 ## CLI Demo
