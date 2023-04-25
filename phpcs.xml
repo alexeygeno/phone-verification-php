@@ -4,7 +4,6 @@
     <arg name="extensions" value="php" />
     <arg name="parallel" value="80" />
     <arg name="colors" />
-    <arg name="report" value="summary"/>
 
     <!-- Ignore warnings (n), show progress of the run (p), and show sniff names (s) -->
     <arg value="nps"/>
@@ -18,7 +17,6 @@
     <config name="php_version" value="74000"/>
     <rule ref="PSR12">
          <exclude name="PSR12.Files.FileHeader.SpacingAfterBlock" />
-<!--         <exclude name="PSR12.Files.OpenTag.NotAlone" />-->
     </rule>
     <rule ref="PSR12">
          <exclude name="PSR12.Files.OpenTag.NotAlone" />
