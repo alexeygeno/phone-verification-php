@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  php:
+    build:
+      context: ./
+      dockerfile: "docker/php${PHP_VERSION}.Dockerfile"
+    volumes:
+      - ./:/package
+    working_dir: /package
+    env_file:
+      - example/.env
+    networks:
+      - phone-verivication-network
+  redis:
+    image: redis:7-alpine
+    expose:
+      - 6379
+    networks:
+      - phone-verivication-network
+  mongodb:
+    image: mongo:6
+    expose:
+      - 27017
+    networks:
+      - phone-verivication-network
+networks:
+  phone-verivication-network:
+    driver: bridge

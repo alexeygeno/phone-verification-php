@@ -1,7 +1,5 @@
 /vendor
-/docker
 /example/.env
-docker-compose.yml
 composer.lock
 .phpunit.result.cache
 .idea
