@@ -24,11 +24,14 @@
     }
   },
   "require":{
-    "php":">=7.4,<8.2"
+    "php":">=7.4,<8.3"
   },
   "suggest": {
     "predis/predis": "Required to use Redis storage",
-    "mongodb/mongodb": "Required to use MongoDB storage"
+    "mongodb/mongodb": "Required to use MongoDB storage",
+    "vonage/client": "Required to use Vonage SDK",
+    "twilio/sdk": "Required to use Twilio SDK",
+    "messagebird/php-rest-api": "Required to use MessageBird SDK"
   },
 
   "repositories": [{
