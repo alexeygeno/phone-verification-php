@@ -16,7 +16,7 @@ class Storage
      */
     public function redis(): Redis
     {
-        return new Redis(new \Predis\Client('redis://redis:6379'));
+        return new Redis(new \Predis\Client(getenv('REDIS_CONNECTION')));
     }
 
     /**
@@ -25,6 +25,6 @@ class Storage
      */
     public function mongoDb(): MongoDb
     {
-        return new MongoDb(new \MongoDB\Client('mongodb://mongodb:27017/'), ['indexes' => 'true', 'db' => 'phone_verification']);
+        return new MongoDb(new \MongoDB\Client(getenv('MONGODB_CONNECTION')), ['indexes' => 'true', 'db' => 'phone_verification']);
     }
 }
