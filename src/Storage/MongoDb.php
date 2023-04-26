@@ -13,7 +13,6 @@ class MongoDb implements I
     protected Client $client;
     protected array $config;
 
-
     /**
      * MongoDb constructor
      *

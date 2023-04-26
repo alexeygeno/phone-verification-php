@@ -24,7 +24,6 @@ final class MessageBirdTest extends TestCase
         ];
     }
 
-
     /**
      * Checks if the invoke method is called as expected
      *

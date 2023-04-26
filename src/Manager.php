@@ -2,7 +2,6 @@
 
 namespace AlexGeno\PhoneVerification;
 
-
 use AlexGeno\PhoneVerification\Exception\Otp;
 use AlexGeno\PhoneVerification\Exception\RateLimit;
 use AlexGeno\PhoneVerification\Sender\I as ISender;

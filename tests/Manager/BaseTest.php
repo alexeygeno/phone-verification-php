@@ -44,7 +44,7 @@ abstract class BaseTest extends TestCase
     {
         return [
             'long' => ['+15417543010'],
-            'short'  => ['5417543010'],
+            'short'  => ['5417543010']
         ];
     }
 }
