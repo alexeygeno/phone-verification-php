@@ -7,4 +7,5 @@ phpunit.xml export-ignore
 phpcs.xml export-ignore
 CONTRIBUTING.md export-ignore
 DEVELOPMENT.md export-ignore
+README.md export-ignore
 LICENSE.txt export-ignore
