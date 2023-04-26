@@ -39,9 +39,9 @@ vendor/bin/phpcbf
 
 Initiation
 ```shell
-php example/initiate.php --storage redis --sender messageBird --to +380935258272
+php example/initiate.php --storage redis --sender messageBird --to +15417543010
 ```
 Completion
 ```shell
-php example/complete.php --storage redis --to +380935258272 --otp 1111
+php example/complete.php --storage redis --to +15417543010 --otp 1111
 ```

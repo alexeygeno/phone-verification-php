@@ -19,7 +19,7 @@ abstract class BaseTest extends TestCase
     public function phoneNumbers(): array
     {
         return [
-            'long' => ['+380935258272'],
+            'long' => ['+15417543010'],
             'short'  => ['5417543010']
         ];
     }

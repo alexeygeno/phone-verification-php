@@ -32,7 +32,7 @@ use AlexGeno\PhoneVerification\Sender\Twilio;
 use AlexGeno\PhoneVerification\Manager;
 
 $storage = new Redis(new \Predis\Client('tcp://127.0.0.1:6379'));
-$sender = new Twilio(new \Twilio\Rest\Client('ACXXXXXX', 'YYYYYY'));
+$sender = new Twilio(new \Twilio\Rest\Client('ACXXXXXX', 'YYYYYY'), ['from' => '+442077206312']);
 $manager = new Manager($storage);
 ```
 ### There are two stages of the verification process ###
@@ -40,22 +40,22 @@ $manager = new Manager($storage);
 **Initiation** -  a **storage** and a **sender** are required for this stage. A user submits a phone and as a result receives an [otp](https://en.wikipedia.org/wiki/One-time_password)
 
 ```php
-$manager->sender($sender)->initiate('+380935258272');
+$manager->sender($sender)->initiate('+15417543010');
 ```
 **Completion** - only a storage is required for this stage. The user submits the [ otp](https://en.wikipedia.org/wiki/One-time_password) to verify the phone
 ```php
-$manager->complete('+380935258272', 1234);
+$manager->complete('+15417543010', 1234);
 ```
 That's basically it. More advanced usage including **otp length customization**, **rate limiters**, **messages customization** you can derive from the following sections.
 
 ## Demo
 **Initiation**
 ```shell
-php example/initiate.php --storage redis --sender messageBird --to +380935258272
+php example/initiate.php --storage redis --sender messageBird --to +15417543010
 ```
 **Completion**
 ```shell
-php example/complete.php --storage redis --to +380935258272 --otp 1111
+php example/complete.php --storage redis --to +15417543010 --otp 1111
 ```
 **Note**: See [DEVELOPMENT.md](DEVELOPMENT.md) as an option for how to set up a development environment
 
@@ -105,10 +105,10 @@ $config = [
 ];
 
 $storage = new Redis(new \Predis\Client('tcp://127.0.0.1:6379'));
-$sender = new Twilio(new \Twilio\Rest\Client('ACXXXXXX', 'YYYYYY'));
+$sender = new Twilio(new \Twilio\Rest\Client('ACXXXXXX', 'YYYYYY'), ['from' => '+442077206312']);
 
 try {
-    (new Manager($storage, $config))->sender($sender)->initiate('+380935258272');
+    (new Manager($storage, $config))->sender($sender)->initiate('+15417543010');
 } catch (RateLimit $e) {
     echo $e->getMessage(); // 'You can send only 10 sms in 24 hours'
 }
@@ -141,7 +141,7 @@ $config = [
 $storage = new Redis(new \Predis\Client('tcp://127.0.0.1:6379'));
 
 try {
-    (new Manager($storage, $config))->complete('+380935258272', 1234);
+    (new Manager($storage, $config))->complete('+15417543010', 1234);
 } catch (RateLimit | Otp $e) {
     // 'Code is incorrect' ||
     // 'Code is expired. You have only 5 minutes to use it.' ||

@@ -19,8 +19,8 @@ final class VonageTest extends TestCase
     {
         // Values: from, to, text
         return [
-            'api_client_data_1' => ['+380935258272', '+442077206312', 'Your code is 23234'],
-            'api_client_data_2' => ['380935258272', '5417543010', 'Your code is 56895']
+            'api_client_data_1' => ['+15417543010', '+442077206312', 'Your code is 23234'],
+            'api_client_data_2' => ['15417543010', '5417543010', 'Your code is 56895']
         ];
     }
 
