@@ -51,7 +51,7 @@ final class RedisTest extends BaseTest
         $sessionExpSecs = 300;
 
         // Emulate that it's been 10 seconds since $sessionExpSecs
-        $time->expects($this->exactly(3))->willReturnOnConsecutiveCalls( 0, 0, $sessionExpSecs + 10);
+        $time->expects($this->exactly(3))->willReturnOnConsecutiveCalls(0, 0, $sessionExpSecs + 10);
 
         $this->storage->sessionUp($phone, 566743, $sessionExpSecs, 100);
 

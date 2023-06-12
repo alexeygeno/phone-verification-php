@@ -2,7 +2,7 @@
   "name": "alexgeno/phone-verification",
   "description":"An extensible and configurable php library to verify a phone",
   "keywords":["otp","phone", "verification", "verify", "sms", "call", "2fa", "2factor","authentication", "signin",
-              "signup", "twilio", "messagebird", "vonage", "redis", "mongo" ],
+              "signup", "twilio", "messagebird", "vonage", "redis", "mongo", "verify-by-phone", "otp" ],
   "type":"library",
   "license":"MIT",
   "authors":[
