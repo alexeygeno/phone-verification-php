@@ -6,11 +6,13 @@ use AlexGeno\PhoneVerification\Exception\Otp;
 use AlexGeno\PhoneVerification\Exception\RateLimit;
 use AlexGeno\PhoneVerification\Sender\I as ISender;
 use AlexGeno\PhoneVerification\Storage\I as IStorage;
+use AlexGeno\PhoneVerification\Manager\Initiator;
+use AlexGeno\PhoneVerification\Manager\Completer;
 
 /**
  * Manager class is an entry point to the package
  */
-class Manager
+class Manager implements Initiator, Completer
 {
     protected array $config;
     protected IStorage $storage;
