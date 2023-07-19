@@ -6,6 +6,6 @@ phpunit.xml export-ignore
 phpunit.xml export-ignore
 phpcs.xml export-ignore
 CONTRIBUTING.md export-ignore
-DEVELOPMENT.md export-ignore
-README.md export-ignore
+docker export-ignore
+docker-compose.yml export-ignore
 LICENSE.txt export-ignore
