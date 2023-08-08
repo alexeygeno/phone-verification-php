@@ -1,6 +1,7 @@
 # Phone Verification
 
-[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPUnit/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
+[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/Tests/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
+[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPStan/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
 [![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/CodeSniffer/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
 [![Coverage Status](https://coveralls.io/repos/github/alexeygeno/phone-verification-php/badge.svg)](https://coveralls.io/github/alexeygeno/phone-verification-php)
 
@@ -15,7 +16,6 @@ This extensible and configurable library allows to set this up just with a few l
 - [ Composer](https://getcomposer.org/)
 - Supported storage clients: [ Predis](https://github.com/predis/predis), [ MongoDb](https://github.com/mongodb/mongo-php-library)
 - Supported sender SDKs: [ Twilio](https://github.com/twilio/twilio-php), [ MessageBird](https://github.com/messagebird/php-rest-api), [Vonage ](https://github.com/Vonage/vonage-php-sdk-core)
-- A smile on your face :smile:
 
 ## Installation
 ```shell

@@ -1,11 +1,11 @@
-name: Tests
+name: PHPStan
 
 on:
   push:
   pull_request:
 
 jobs:
-  phpunit:
+  cs:
     runs-on: ubuntu-latest
 
     strategy:
@@ -23,8 +23,6 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          coverage: xdebug
-          extensions: mongodb
           php-version: ${{ matrix.php }}
           tools: composer:v2
 
@@ -37,12 +35,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run PHPUnit tests
-        run: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
-
-      - name: Upload coverage results to Coveralls
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          composer global require php-coveralls/php-coveralls
-          php-coveralls --coverage_clover=build/logs/clover.xml -v
+      - name: Run PHP CodeSniffer
+        run: vendor/bin/phpstan
