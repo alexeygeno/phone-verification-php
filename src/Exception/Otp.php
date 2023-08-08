@@ -5,7 +5,7 @@ namespace AlexGeno\PhoneVerification\Exception;
 use AlexGeno\PhoneVerification\Exception;
 
 /**
- * Exception class that identifies OTP related errors
+ * Exception class that identifies OTP (One-Time Password) related errors
  */
 class Otp extends Exception
 {

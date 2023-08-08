@@ -7,7 +7,7 @@ use Helmich\MongoMock\MockDatabase;
 use AlexGeno\PhoneVerification\Storage\MongoDb;
 
 /**
- * Class to test the MongoDb storage
+ * Test the MongoDb storage
  */
 final class MongoDbTest extends BaseTest
 {

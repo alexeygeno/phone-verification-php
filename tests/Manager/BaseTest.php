@@ -8,11 +8,14 @@ use PHPUnit\Framework\TestCase;
 use Predis\Client;
 
 /**
- * Base class to test Manager
+ * Base class to test the Manager
  */
 abstract class BaseTest extends TestCase
 {
-    protected \AlexGeno\PhoneVerification\Sender\I $senderMock;
+    /**
+     * @var \AlexGeno\PhoneVerification\Sender\Twilio|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $senderMock;
     protected Redis $storageMock;
     private Client $redisMock;
 

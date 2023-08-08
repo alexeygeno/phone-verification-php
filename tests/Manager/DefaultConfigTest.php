@@ -7,7 +7,7 @@ use AlexGeno\PhoneVerification\Exception\Otp;
 use AlexGeno\PhoneVerification\Manager;
 
 /**
- * Class to test Manager with a default config
+ * Test the Manager with the default config
  */
 final class DefaultConfigTest extends BaseTest
 {
@@ -24,7 +24,7 @@ final class DefaultConfigTest extends BaseTest
     }
 
     /**
-     * Checks if the verification process goes as expected using a correct otp to complete
+     * Checks if the verification process goes as expected using a correct OTP to complete
      *
      * @dataProvider phoneNumbers
      * @param string $phone
@@ -41,7 +41,7 @@ final class DefaultConfigTest extends BaseTest
     }
 
     /**
-     * Checks if the verification process goes as expected using an incorrect otp to complete
+     * Checks if the verification process goes as expected using an incorrect OTP to complete
      *
      * @dataProvider phoneNumbers
      * @param string $phone
@@ -63,7 +63,7 @@ final class DefaultConfigTest extends BaseTest
     }
 
     /**
-     * Checks if the verification process goes as expected using an expired otp to complete
+     * Checks if the verification process goes as expected using an expired OTP to complete
      *
      * @dataProvider phoneNumbers
      * @param string $phone
@@ -88,7 +88,7 @@ final class DefaultConfigTest extends BaseTest
     }
 
     /**
-     * Checks if the initiation without a sender throws Exception
+     * Checks if the initiation without a sender throws an exception
      *
      * @dataProvider phoneNumbers
      * @param string $phone

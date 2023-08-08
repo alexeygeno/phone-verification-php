@@ -5,19 +5,23 @@ namespace AlexGeno\PhoneVerification\Storage;
 use Predis\Client;
 
 /**
- * MongoDb storage implementation
+ * Redis storage implementation
  */
 class Redis implements I
 {
     protected Client $client;
+
+    /**
+     * @var array<mixed>
+     */
     protected array $config;
 
     /**
-     * Redis constructor
+     * Constructor
      *
-     * @param Client $client
-     * @param array  $config
-     * Every param has a default value and could be replaced
+     * @param Client       $client
+     * @param array<mixed> $config
+     * Every param has a default value and can be replaced
      * [
      *     'prefix' => 'pv:1',
      *     'session_key' => 'session',
@@ -32,7 +36,7 @@ class Redis implements I
     }
 
     /**
-     * Returns session full key
+     * Returns the session key
      *
      * @param string $sessionId
      * @return string
@@ -43,7 +47,7 @@ class Redis implements I
     }
 
     /**
-     * Returns session counter full key
+     * Returns the session counter key
      *
      * @param string $sessionId
      * @return string
@@ -54,13 +58,7 @@ class Redis implements I
     }
 
     /**
-     * Creates session and increments its counter
-     *
-     * @param string  $sessionId
-     * @param integer $otp
-     * @param integer $sessionExpSecs
-     * @param integer $sessionCounterExpSecs
-     * @return $this
+     * {@inheritdoc}
      */
     public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): self
     {
@@ -72,28 +70,11 @@ class Redis implements I
         $this->client->incr($this->sessionCounterKey($sessionId));
         $this->client->expire($this->sessionCounterKey($sessionId), $sessionCounterExpSecs, 'NX');
 
-        /*
-            TODO: make the transaction execution optional via config param $atomicity
-            @link https://github.com/predis/predis#transactions
-            $this->client->transaction(function($transaction) use ($sessionId, $otp, $sessionExpSecs, $sessionCounterExpSecs){
-            // Session
-            $transaction->hmset($this->sessionKey($sessionId), ['otp' => $otp, 'otp_check_count' => 0]);
-            $transaction->expire($this->sessionKey($sessionId), $sessionExpSecs);
-
-            // Session counter
-            $transaction->incr($this->sessionCounterKey($sessionId));
-            $transaction->expire($this->sessionCounterKey($sessionId), $sessionCounterExpSecs, 'NX');
-            });
-        */
-
         return $this;
     }
 
     /**
-     * Drops session by its id
-     *
-     * @param string $sessionId
-     * @return $this
+     * {@inheritdoc}
      */
     public function sessionDown(string $sessionId): self
     {
@@ -102,10 +83,7 @@ class Redis implements I
     }
 
     /**
-     * Returns the amount of recreated sessions
-     *
-     * @param string $sessionId
-     * @return integer
+     * {@inheritdoc}
      */
     public function sessionCounter(string $sessionId): int
     {
@@ -113,10 +91,7 @@ class Redis implements I
     }
 
     /**
-     * Returns session otp
-     *
-     * @param string $sessionId
-     * @return integer
+     * {@inheritdoc}
      */
     public function otp(string $sessionId): int
     {
@@ -124,10 +99,7 @@ class Redis implements I
     }
 
     /**
-     * Increments the amount of otp checks for the session
-     *
-     * @param string $sessionId
-     * @return $this
+     * {@inheritdoc}
      */
     public function otpCheckIncrement(string $sessionId): self
     {
@@ -136,10 +108,7 @@ class Redis implements I
     }
 
     /**
-     * Returns the amount of otp checks for the session
-     *
-     * @param string $sessionId
-     * @return integer
+     * {@inheritdoc}
      */
     public function otpCheckCounter(string $sessionId): int
     {

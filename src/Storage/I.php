@@ -3,12 +3,17 @@
 namespace AlexGeno\PhoneVerification\Storage;
 
 /**
- * Interface to implement a storage
+ * Interface for implementing a storage
+ *
+ * Session - an array containing verification info
+ * Session counter - the number of times the session was recreated
+ * OTP - One-time password
+ * OTP check counter - the number of executed attempts to verify a session
  */
 interface I
 {
     /**
-     * Creates session and increments its counter
+     * Creates a session and increments its counter
      *
      * @param string  $sessionId
      * @param integer $otp
@@ -19,7 +24,7 @@ interface I
     public function sessionUp(string $sessionId, int $otp, int $sessionExpSecs, int $sessionCounterExpSecs): self;
 
     /**
-     * Drops session by its id
+     * Drops the session
      *
      * @param string $sessionId
      * @return I
@@ -27,7 +32,7 @@ interface I
     public function sessionDown(string $sessionId): self;
 
     /**
-     * Returns the amount of recreated sessions
+     * Returns the number of times the session was recreated
      *
      * @param string $sessionId
      * @return integer
@@ -35,7 +40,7 @@ interface I
     public function sessionCounter(string $sessionId): int;
 
     /**
-     * Returns session otp
+     * Returns the one-time password for the session
      *
      * @param string $sessionId
      * @return integer
@@ -43,7 +48,7 @@ interface I
     public function otp(string $sessionId): int;
 
     /**
-     * Increments the amount of otp checks for the session
+     * Increments the number of attempts to verify the session
      *
      * @param string $sessionId
      * @return I
@@ -51,7 +56,7 @@ interface I
     public function otpCheckIncrement(string $sessionId): self;
 
     /**
-     * Returns the amount of otp checks for the session
+     * Returns the number of attempts to verify the session
      *
      * @param string $sessionId
      * @return integer

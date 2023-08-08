@@ -1,0 +1,6 @@
+parameters:
+  paths:
+    - example
+    - src
+    - tests
+  level: 6

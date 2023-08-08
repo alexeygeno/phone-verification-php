@@ -5,9 +5,10 @@ namespace AlexGeno\PhoneVerificationTests\Manager;
 use AlexGeno\PhoneVerification\Exception\Otp;
 use AlexGeno\PhoneVerification\Exception\RateLimit;
 use AlexGeno\PhoneVerification\Manager;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
- * Class to test Manager with a custom config
+ * Test the Manager with a custom config
  */
 final class CustomConfigTest extends BaseTest
 {
@@ -19,7 +20,7 @@ final class CustomConfigTest extends BaseTest
 
     /**
      * Otp lengths data provider
-     * @return array[]
+     * @return array<mixed>
      */
     public function otpLengths(): array
     {
@@ -35,7 +36,7 @@ final class CustomConfigTest extends BaseTest
 
     /**
      * Checks if the verification process goes as expected
-     * making the maximum possible attempts to complete with an incorrect otp
+     * making the maximum possible attempts to complete with an incorrect OTP
      * and then trying a correct one
      *
      * @dataProvider phoneNumbers
@@ -81,7 +82,7 @@ final class CustomConfigTest extends BaseTest
 
     /**
      * Checks if the verification process goes as expected
-     * making (the maximum possible attempts - 1) to complete with an incorrect otp
+     * making (the maximum possible attempts - 1) to complete with an incorrect OTP
      * and then trying a correct one
      *
      * @dataProvider phoneNumbers

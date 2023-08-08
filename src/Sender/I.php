@@ -3,12 +3,12 @@
 namespace AlexGeno\PhoneVerification\Sender;
 
 /**
- * Interface to implement a sender
+ * Interface for implementing a sender
  */
 interface I
 {
     /**
-     * Performs sending
+     * Performs the sending operation and returns the API response
      * Returns API response
      *
      * @param string $to

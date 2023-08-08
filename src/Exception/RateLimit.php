@@ -5,7 +5,7 @@ namespace AlexGeno\PhoneVerification\Exception;
 use AlexGeno\PhoneVerification\Exception;
 
 /**
- * Exception class that identifies violating amount restrictions during the verification process
+ * Exception class that identifies violations of rate limits during the verification process
  */
 class RateLimit extends Exception
 {

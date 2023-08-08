@@ -14,7 +14,7 @@ class MessageBird implements I
     protected Message $message;
 
     /**
-     * MessageBird constructor
+     * Constructor
      * @link https://developers.messagebird.com/api/sms-messaging/#send-outbound-sms
      *
      * @param Client  $client
@@ -27,16 +27,7 @@ class MessageBird implements I
     }
 
     /**
-     * Performs sending
-     * Returns API response
-     *
-     * @param string $to
-     * @param string $text
-     * @return mixed
-     * @throws \JsonException
-     * @throws \MessageBird\Exceptions\AuthenticateException
-     * @throws \MessageBird\Exceptions\BalanceException
-     * @throws \MessageBird\Exceptions\HttpException
+     * {@inheritdoc}
      */
     public function invoke(string $to, string $text)
     {

@@ -48,6 +48,7 @@
     "messagebird/php-rest-api": "^3.1",
     "vonage/client": "^3.0",
     "mongodb/mongodb": "^1.15",
-    "helmich/mongomock": "dev-master"
+    "helmich/mongomock": "dev-master",
+    "phpstan/phpstan": "^1.10"
   }
 }

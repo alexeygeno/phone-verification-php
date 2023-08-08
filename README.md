@@ -1,30 +1,30 @@
-# Phone Verification #
+# Phone Verification
 
 [![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPUnit/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
 [![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/CodeSniffer/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
 [![Coverage Status](https://coveralls.io/repos/github/alexeygeno/phone-verification-php/badge.svg)](https://coveralls.io/github/alexeygeno/phone-verification-php)
 
-The usual way to sign in/sign up on a modern website or mobile app is:
-- A user initiates verification submitting a phone number 
-- The user receives an sms or a call with an [ otp](https://en.wikipedia.org/wiki/One-time_password)
-- The user completes verification submitting the [ otp](https://en.wikipedia.org/wiki/One-time_password)
+Signing in or signing up on a modern website or mobile app typically follows these steps:
+- A user initiates verification by submitting a phone number
+- The user receives an SMS or a call with a one-time password [(OTP)](https://en.wikipedia.org/wiki/One-time_password)
+- The user completes verification by submitting the [OTP](https://en.wikipedia.org/wiki/One-time_password)
 
-This extensible and configurable library allows to set this up just with a few lines of code.
-## Requirements ##
-- One of the supported PHP versions: 7.4, 8.0, 8.1, 8.2
+This extensible and configurable library allows to set this up just with a few lines of code
+## Requirements
+- Supported PHP versions: 7.4, 8.0, 8.1, 8.2
 - [ Composer](https://getcomposer.org/)
-- One of the supported storage clients: [ Predis](https://github.com/predis/predis), [ MongoDb](https://github.com/mongodb/mongo-php-library)
-- One of the supported sender SDKs: [ Twilio](https://github.com/twilio/twilio-php), [ MessageBird](https://github.com/messagebird/php-rest-api), [Vonage ](https://github.com/Vonage/vonage-php-sdk-core)
+- Supported storage clients: [ Predis](https://github.com/predis/predis), [ MongoDb](https://github.com/mongodb/mongo-php-library)
+- Supported sender SDKs: [ Twilio](https://github.com/twilio/twilio-php), [ MessageBird](https://github.com/messagebird/php-rest-api), [Vonage ](https://github.com/Vonage/vonage-php-sdk-core)
 - A smile on your face :smile:
 
-## Installation ##
+## Installation
 ```shell
 composer require alexgeno/phone-verification
 ```
-**Note:** All supported storage clients and sender SDKs are in **require-dev**. In a production environment you must manually install only what you use.
-## Basic Usage ##
+**Note:** All supported storage clients and sender SDKs are in **require-dev** section. In a production environment you must manually install only what you use.
+## Basic Usage
 
-### Instantiation ###
+### Instantiation
 [ Predis](https://github.com/predis/predis) as a **storage** and  [ Twilio](https://github.com/twilio/twilio-php) as a **sender** are used for the demonstration
 ```php
 use AlexGeno\PhoneVerification\Storage\Redis;
@@ -35,7 +35,7 @@ $storage = new Redis(new \Predis\Client('tcp://127.0.0.1:6379'));
 $sender = new Twilio(new \Twilio\Rest\Client('ACXXXXXX', 'YYYYYY'), ['from' => '+442077206312']);
 $manager = new Manager($storage);
 ```
-### There are two stages of the verification process ###
+### There are two stages in the verification process
 
 **Initiation** -  a **storage** and a **sender** are required for this stage. A user submits a phone and as a result receives an [otp](https://en.wikipedia.org/wiki/One-time_password)
 
@@ -49,11 +49,11 @@ $manager->complete('+15417543010', 1234);
 That's basically it. More advanced usage including **otp length customization**, **rate limiters**, **messages customization** you can derive from the following sections.
 
 ## Demo
-**Initiation**
+**Initiation** 
 ```shell
 php example/initiate.php --storage redis --sender messageBird --to +15417543010
 ```
-**Completion**
+**Completion** 
 ```shell
 php example/complete.php --storage redis --to +15417543010 --otp 1111
 ```

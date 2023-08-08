@@ -6,13 +6,12 @@ use AlexGeno\PhoneVerification\Sender\MessageBird;
 
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 /**
- * Class Sender
- * Sender factory - creates sender clients instances
+ * Sender factory - creates sender client instances
  */
 class Sender
 {
     /**
-     * Returns Twilio client instance
+     * Returns a Twilio client instance
      * @return Twilio
      * @throws \Twilio\Exceptions\ConfigurationException
      */
@@ -25,7 +24,7 @@ class Sender
     }
 
     /**
-     * Returns Vonage client instance
+     * Returns a Vonage client instance
      * @return Vonage
      */
     public function vonage(): Vonage
@@ -37,7 +36,7 @@ class Sender
     }
 
     /**
-     * Returns MessageBird client instance
+     * Returns a MessageBird client instance
      * @return MessageBird
      */
     public function messageBird(): MessageBird

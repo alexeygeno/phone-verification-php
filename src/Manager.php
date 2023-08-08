@@ -10,10 +10,13 @@ use AlexGeno\PhoneVerification\Manager\Initiator;
 use AlexGeno\PhoneVerification\Manager\Completer;
 
 /**
- * Manager class is an entry point to the package
+ * The Manager class is an entry point to the package
  */
 class Manager implements Initiator, Completer
 {
+    /**
+     * @var array<mixed>
+     */
     protected array $config;
     protected IStorage $storage;
     protected ISender $sender;
@@ -22,11 +25,11 @@ class Manager implements Initiator, Completer
     protected int $otpMax;
 
     /**
-     * Manager constructor
+     * Constructor
      *
-     * @param IStorage $storage
-     * @param array    $config
-     * Every param has a default value and could be replaced
+     * @param IStorage     $storage
+     * @param array<mixed> $config
+     * Every param has a default value and can be replaced
      * [
      *     'otp' => [
      *         'length' => 4,
@@ -81,7 +84,7 @@ class Manager implements Initiator, Completer
     }
 
     /**
-     * Sets sender
+     * Sets the sender
      * Must be called before the initiate method
      *
      * @param ISender $sender
@@ -94,7 +97,7 @@ class Manager implements Initiator, Completer
     }
 
     /**
-     * Returns generated otp
+     * Returns the generated OTP
      *
      * @return integer
      */
@@ -104,14 +107,14 @@ class Manager implements Initiator, Completer
     }
 
     /**
-     * Initiates the verification process by sending an otp to a phone.
+     * Initiates the verification process by sending an OTP to a phone
      *
      * @param string $phone
      * @return $this
      * @throws Exception\RateLimit
      * @throws Exception
      */
-    public function initiate(string $phone):self
+    public function initiate(string $phone): self
     {
         if (!isset($this->sender)) {
             throw new Exception('Sender is required to call Manager::initiate. Try to call Manager::sender before.');
@@ -130,7 +133,7 @@ class Manager implements Initiator, Completer
     }
 
     /**
-     * Completes the verification process by checking if the otp is correct for the phone
+     * Completes the verification process by checking the correctness of the provided OTP for the given phone number
      *
      * @param string  $phone
      * @param integer $otp

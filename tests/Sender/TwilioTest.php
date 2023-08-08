@@ -6,7 +6,7 @@ use AlexGeno\PhoneVerification\Sender\Twilio;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class to test the Twilio sender
+ * Test the Twilio sender
  */
 final class TwilioTest extends TestCase
 {

@@ -6,7 +6,7 @@ use AlexGeno\PhoneVerification\Sender\Vonage;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class to test the Vonage sender
+ * Test the Vonage sender
  */
 final class VonageTest extends TestCase
 {

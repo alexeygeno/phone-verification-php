@@ -14,7 +14,7 @@ class Vonage implements I
     protected string $brandName;
 
     /**
-     * Vonage constructor
+     * Constructor
      * @link https://developer.vonage.com/en/messaging/sms/code-snippets/send-an-sms-with-unicode
      *
      * @param Client $client
@@ -27,14 +27,7 @@ class Vonage implements I
     }
 
     /**
-     * Performs sending
-     * Returns API response
-     *
-     * @param string $to
-     * @param string $text
-     * @return mixed|\Vonage\SMS\Collection
-     * @throws Client\Exception\Exception
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * {@inheritdoc}
      */
     public function invoke(string $to, string $text)
     {

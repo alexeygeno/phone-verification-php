@@ -17,17 +17,6 @@
     <config name="php_version" value="74000"/>
     <rule ref="PSR12">
          <exclude name="PSR12.Files.FileHeader.SpacingAfterBlock" />
-    </rule>
-    <rule ref="PSR12">
          <exclude name="PSR12.Files.OpenTag.NotAlone" />
-    </rule>
-    <rule ref="Squiz.Commenting">
-        <exclude name="Squiz.Commenting.ClosingDeclarationComment" />
-        <exclude name="Squiz.Commenting.FileComment.Missing" />
-        <exclude name="Squiz.Commenting.VariableComment.Missing" />
-        <exclude name="Squiz.Commenting.FunctionComment.EmptyThrows" />
-        <exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
-        <exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
-        <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
     </rule>
 </ruleset>

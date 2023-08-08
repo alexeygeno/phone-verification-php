@@ -14,6 +14,7 @@ abstract class BaseTest extends TestCase
 
     /**
      * Phone numbers data provider
+     *
      * @return string[][]
      */
     public function phoneNumbers(): array
@@ -25,7 +26,7 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * Checks if session exists after the creation
+     * Checks if the session exists after the creation
      *
      * @dataProvider phoneNumbers
      * @param string $phone
@@ -38,7 +39,7 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * Checks if session data was updated after recreation
+     * Checks if the session data was updated after the recreation
      *
      * @dataProvider phoneNumbers
      * @param string $phone
@@ -53,7 +54,7 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * Checks if session counter works as expected
+     * Checks if the session counter works as expected
      *
      * @dataProvider phoneNumbers
      * @param string $phone
@@ -76,7 +77,7 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * Checks if otp is empty when the session was deleted beforehand
+     * Checks if the otp is empty when the session was deleted beforehand
      *
      * @dataProvider phoneNumbers
      * @param string $phone
@@ -90,7 +91,7 @@ abstract class BaseTest extends TestCase
     }
 
     /**
-     * Checks if otp is empty for a non-existing session
+     * Checks if the otp is empty for a non-existing session
      *
      * @dataProvider phoneNumbers
      * @param string $phone

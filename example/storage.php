@@ -5,13 +5,12 @@ use AlexGeno\PhoneVerification\Storage\Redis;
 
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 /**
- * Class Storage
- * Storage factory - creates storage clients instances
+ * Storage factory - creates storage client instances
  */
 class Storage
 {
     /**
-     * Returns Redis client instance
+     * Returns a Redis client instance
      * @return Redis
      */
     public function redis(): Redis
@@ -20,7 +19,7 @@ class Storage
     }
 
     /**
-     * Returns MongoDb client instance
+     * Returns a MongoDb client instance
      * @return MongoDb
      */
     public function mongoDb(): MongoDb

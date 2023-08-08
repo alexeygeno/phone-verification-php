@@ -6,7 +6,7 @@ use AlexGeno\PhoneVerification\Sender\MessageBird;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class to test the MessageBird sender
+ * Test the MessageBird sender
  */
 final class MessageBirdTest extends TestCase
 {
@@ -48,7 +48,7 @@ final class MessageBirdTest extends TestCase
         $clientMock->messages = $resourceMessagesMock;
 
         // Clone to compare 2 different objects by their data.
-        // Since objects always passes by reference without cloning we can't see if
+        // Since objects always are passed by reference without cloning we can't see if
         // \MessageBird\Objects\Message will be built incorrectly inside MessageBird::invoke
         $resourceMessagesMock->expects($this->once())
                              ->method('create')

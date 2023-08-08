@@ -8,7 +8,7 @@ use M6Web\Component\RedisMock\RedisMockFactory;
 use Predis\Client;
 
 /**
- * Class to test the Redis storage
+ * Test the Redis storage
  */
 final class RedisTest extends BaseTest
 {
@@ -36,7 +36,7 @@ final class RedisTest extends BaseTest
     }
 
     /**
-     * Checks if the otp expiration works as expected
+     * Checks if the OTP expiration works as expected
      *
      * @dataProvider phoneNumbers
      * @runInSeparateProcess

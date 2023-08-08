@@ -10,15 +10,18 @@ use Twilio\Rest\Client;
 class Twilio implements I
 {
     protected Client $client;
+    /**
+     * @var array<mixed>
+     */
     protected array $options;
 
     /**
-     * Twilio constructor
+     * Constructor
      * @link https://www.twilio.com/docs/sms/quickstart/php
      * @link https://www.twilio.com/docs/sms/api/message-resource
      *
-     * @param Client $client
-     * @param array  $options
+     * @param Client       $client
+     * @param array<mixed> $options
      */
     public function __construct(Client $client, array $options)
     {
@@ -27,13 +30,7 @@ class Twilio implements I
     }
 
     /**
-     * Performs sending
-     * Returns API response
-     *
-     * @param string $to
-     * @param string $text
-     * @return mixed|\Twilio\Rest\Api\V2010\Account\MessageInstance
-     * @throws \Twilio\Exceptions\TwilioException
+     * {@inheritdoc}
      */
     public function invoke(string $to, string $text)
     {
