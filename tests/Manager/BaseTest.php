@@ -22,7 +22,7 @@ abstract class BaseTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->senderMock = $this->createStub(\AlexGeno\PhoneVerification\Sender\Twilio::class);
+        $this->senderMock = $this->createMock(\AlexGeno\PhoneVerification\Sender\Twilio::class);
         $this->redisMock = (new RedisMockFactory())->getAdapter('\Predis\Client');
         $this->storageMock  = new Redis($this->redisMock);
     }

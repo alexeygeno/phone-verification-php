@@ -105,14 +105,13 @@ class Manager implements Initiator, Completer
 
     /**
      * Initiates the verification process by sending an otp to a phone.
-     * Returns sender's API response
      *
      * @param string $phone
-     * @return mixed
+     * @return $this
      * @throws Exception\RateLimit
      * @throws Exception
      */
-    public function initiate(string $phone)
+    public function initiate(string $phone):self
     {
         if (!isset($this->sender)) {
             throw new Exception('Sender is required to call Manager::initiate. Try to call Manager::sender before.');
@@ -124,8 +123,10 @@ class Manager implements Initiator, Completer
         if ($this->storage->sessionCounter($phone) >= (int)$rateLimitInitiate['count']) {
             throw new RateLimit($rateLimitInitiate['message']($phone, $rateLimitInitiate['period_secs'], $rateLimitInitiate['count']), RateLimit::CODE_INITIATE);
         }
+        // Don't do anything in storage if sender::invoke throws an exception
+        $this->sender->invoke($phone, $message);
         $this->storage->sessionUp($phone, $this->otp, $this->config['rate_limits']['complete']['period_secs'], $rateLimitInitiate['period_secs']);
-        return $this->sender->invoke($phone, $message);
+        return $this;
     }
 
     /**

@@ -203,12 +203,11 @@ final class CustomConfigTest extends BaseTest
         $message = "Just a test message";
         $manager = new Manager($this->storageMock, ['otp' => ['message' => fn() => $message]]);
 
-        $responseMock = ['ok' => true];
         $this->senderMock->expects($this->once())
             ->method('invoke')
-            ->with($this->identicalTo($phone), $message)->willReturn($responseMock);
+            ->with($this->identicalTo($phone), $this->identicalTo($message));
 
         $response = $manager->sender($this->senderMock)->initiate($phone);
-        $this->assertEquals($responseMock, $response);
+        $this->assertInstanceOf(Manager::class, $response);
     }
 }
