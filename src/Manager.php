@@ -124,11 +124,11 @@ class Manager implements Initiator, Completer
 
         $rateLimitInitiate = $this->config['rate_limits']['initiate'];
         if ($this->storage->sessionCounter($phone) >= (int)$rateLimitInitiate['count']) {
-            throw new RateLimit($rateLimitInitiate['message']($phone, $rateLimitInitiate['period_secs'], $rateLimitInitiate['count']), RateLimit::CODE_INITIATE);
+            throw new RateLimit($rateLimitInitiate['message']($phone, (int)$rateLimitInitiate['period_secs'], (int)$rateLimitInitiate['count']), RateLimit::CODE_INITIATE);
         }
         // Don't do anything in storage if sender::invoke throws an exception
         $this->sender->invoke($phone, $message);
-        $this->storage->sessionUp($phone, $this->otp, $this->config['rate_limits']['complete']['period_secs'], $rateLimitInitiate['period_secs']);
+        $this->storage->sessionUp($phone, $this->otp, (int)$this->config['rate_limits']['complete']['period_secs'], (int)$rateLimitInitiate['period_secs']);
         return $this;
     }
 
@@ -146,14 +146,14 @@ class Manager implements Initiator, Completer
         $rateLimit = $this->config['rate_limits']['complete'];
 
         if ($this->storage->otpCheckCounter($phone) >= (int)$rateLimit['count']) {
-            throw new RateLimit($rateLimit['message']($phone, $rateLimit['period_secs'], $rateLimit['count']), RateLimit::CODE_COMPLETE);
+            throw new RateLimit($rateLimit['message']($phone, (int)$rateLimit['period_secs'], (int)$rateLimit['count']), RateLimit::CODE_COMPLETE);
         }
 
         $storedOtp = $this->storage->otp($phone);
 
         // Expired otp!
         if ($storedOtp === 0) {
-            throw new Otp($this->config['otp']['message_expired']($rateLimit['period_secs'], $otp), Otp::CODE_EXPIRED);
+            throw new Otp($this->config['otp']['message_expired']((int)$rateLimit['period_secs'], $otp), Otp::CODE_EXPIRED);
         }
         // Incorrect otp!
         if ($storedOtp !== $otp) {
