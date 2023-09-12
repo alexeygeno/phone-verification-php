@@ -4,6 +4,8 @@ namespace AlexGeno\PhoneVerification\Storage;
 
 use MongoDB\Client;
 use MongoDB\Collection;
+use MongoDB\Model\BSONArray;
+use MongoDB\Model\BSONDocument;
 
 /**
  * MongoDb storage implementation
@@ -11,6 +13,15 @@ use MongoDB\Collection;
 class MongoDb implements I
 {
     protected Client $client;
+
+    /**
+     * @see https://www.php.net/manual/en/mongodb-driver-cursor.settypemap.php
+     */
+    private const TYPE_MAP = [
+        'array' => BSONArray::class,
+        'document' => BSONDocument::class,
+        'root' => BSONDocument::class,
+    ];
 
     /**
      * @var array<mixed>
@@ -85,7 +96,7 @@ class MongoDb implements I
         ];
 
         $this->collection($this->config['collection_session'])
-             ->updateOne(['id' => $sessionId], ['$set' => $sessionSet], ['upsert' => true/*, 'session'=> $session*/]);
+             ->updateOne(['id' => $sessionId], ['$set' => $sessionSet], ['upsert' => true]);
 
         $sessionCounterSetOnInsert = [
             // New datetime on creation, no changes on update!
@@ -93,9 +104,9 @@ class MongoDb implements I
         ];
 
         $this->collection($this->config['collection_session_counter'])
-             ->updateOne(['id' => $sessionId], ['$setOnInsert' => $sessionCounterSetOnInsert], ['upsert' => true, /*'session'=> $session*/]);
+             ->updateOne(['id' => $sessionId], ['$setOnInsert' => $sessionCounterSetOnInsert], ['upsert' => true]);
         $this->collection($this->config['collection_session_counter'])
-             ->updateOne(['id' => $sessionId], ['$inc' => ['count' => 1]], [/*'session'=> $session*/]);
+             ->updateOne(['id' => $sessionId], ['$inc' => ['count' => 1]]);
 
         // Indexes
         if ($this->config['indexes']) {
@@ -120,7 +131,7 @@ class MongoDb implements I
     public function sessionCounter(string $sessionId): int
     {
         $sessionCounter = $this->collection($this->config['collection_session_counter'])
-                               ->findOne(['id' => $sessionId], ['projection' => ['count' => 1]]);
+                               ->findOne(['id' => $sessionId], ['projection' => ['count' => 1], 'typeMap' => self::TYPE_MAP]);
         return  ($sessionCounter and !empty($sessionCounter->count)) ? $sessionCounter->count : 0;
     }
 
@@ -130,7 +141,7 @@ class MongoDb implements I
     public function otp(string $sessionId): int
     {
         $session = $this->collection($this->config['collection_session'])
-                        ->findOne(['id' => $sessionId], ['projection' => ['otp' => 1]]);
+                        ->findOne(['id' => $sessionId], ['projection' => ['otp' => 1], 'typeMap' => self::TYPE_MAP]);
         return  ($session and !empty($session->otp)) ? $session->otp :  0;
     }
 
@@ -150,7 +161,7 @@ class MongoDb implements I
     public function otpCheckCounter(string $sessionId): int
     {
         $session = $this->collection($this->config['collection_session'])
-                        ->findOne(['id' => $sessionId], ['projection' => ['otp_check_count' => 1]]);
+                        ->findOne(['id' => $sessionId], ['projection' => ['otp_check_count' => 1], 'typeMap' => self::TYPE_MAP]);
         return  ($session and !empty($session->otp_check_count)) ? $session->otp_check_count : 0;
     }
 }
