@@ -1,8 +1,8 @@
 # Phone Verification
 
-[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/Tests/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
-[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPStan/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
-[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/CodeSniffer/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions)
+[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/Tests/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions/workflows/tests.yml)
+[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/PHPStan/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions/workflows/phpstan.yml)
+[![Build Status](https://github.com/alexeygeno/phone-verification-php/workflows/CodeSniffer/badge.svg)](https://github.com/alexeygeno/phone-verification-php/actions/workflows/cs.yml)
 [![Coverage Status](https://coveralls.io/repos/github/alexeygeno/phone-verification-php/badge.svg)](https://coveralls.io/github/alexeygeno/phone-verification-php)
 
 Signing in or signing up on a modern website or mobile app typically follows these steps:
