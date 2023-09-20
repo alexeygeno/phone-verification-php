@@ -14,8 +14,9 @@ This extensible and configurable library allows to set this up just with a few l
 ## Requirements
 - Supported PHP versions: 7.4, 8.0, 8.1, 8.2
 - [ Composer](https://getcomposer.org/)
-- Supported storage clients: [ Predis](https://github.com/predis/predis), [ MongoDb](https://github.com/mongodb/mongo-php-library)
-- Supported sender SDKs: [ Twilio](https://github.com/twilio/twilio-php), [ MessageBird](https://github.com/messagebird/php-rest-api), [Vonage ](https://github.com/Vonage/vonage-php-sdk-core)
+- Any of the supported sender SDKs: [twilio/sdk](https://github.com/twilio/twilio-php), [messagebird/php-rest-api](https://github.com/messagebird/php-rest-api), [vonage/client](https://github.com/vonage/vonage-php-sdk-core)
+- Any of the supported storage clients: [predis/predis](https://github.com/predis/predis), [mongodb/mongo-php-library](https://github.com/mongodb/mongo-php-library)
+
 
 ## Installation
 ```shell
